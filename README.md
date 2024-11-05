@@ -1,3 +1,24 @@
+## API Documentation
+
+### User Authentication
+
+`[POST] signup`:
+body:
+
+```
+{
+    "role": "DOCTOR" | "PATIENT",
+    "email": string,
+    "password": string,
+    "firstName": string,
+    "lastName": string
+}
+```
+
+return `UserRecord`
+
+<br>
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
