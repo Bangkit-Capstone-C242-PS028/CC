@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
     try {
       const claims = await app.auth().verifyIdToken(idToken);
 
-      if (claims.role === permissions[0]) {
+      if (permissions.includes(claims.role)) {
         return true;
       }
       throw new UnauthorizedException();
