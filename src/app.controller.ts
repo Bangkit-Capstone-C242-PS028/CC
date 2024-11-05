@@ -16,6 +16,7 @@ export class AppController {
   }
 
   @Get('/evening')
+  @Auth('PATIENT', 'DOCTOR')
   goodEvening() {
     return 'Good Evening!';
   }
