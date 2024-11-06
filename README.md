@@ -18,23 +18,109 @@ npm run start
 
 ### User Authentication
 
-`[POST] signup`:
+#### Signup
+
+`[POST] /users/signup`:
+
 body:
 
 ```
 {
-    "role": "DOCTOR" | "PATIENT",
+    "role": "DOCTOR",
     "email": string,
     "password": string,
     "confirmPassword": string,
     "firstName": string,
     "lastName": string
     "dob": ISO8601 Date,
+    "address": string,
+    "specialization": string,
+    "workplace": string
+}
+|
+{
+    "role": "PATIENT",
+    "email": string,
+    "password": string,
+    "confirmPassword": string,
+    "firstName": string,
+    "lastName": string,
+    "dob": ISO8601 Date,
     "address": string
 }
 ```
 
 return `UserRecord`
+
+<br>
+
+#### Articles
+
+```
+POST   /articles                          - Create a new article (DOCTOR only)
+GET    /articles?page=1&limit=10          - Get all articles (DOCTOR, PATIENT)
+GET    /articles/:id?includeAuthor=true   - Get a specific article (DOCTOR, PATIENT)
+PATCH  /articles/:id                      - Update an article (DOCTOR only, must be author)
+DELETE /articles/:id                      - Delete an article (DOCTOR only, must be author)
+```
+
+<br>
+
+##### Create Article
+
+`[POST] /articles`:
+
+body:
+
+```
+{
+    "title": string,
+    "content": string
+}
+```
+
+return `Article`
+
+<br>
+
+##### Get All Articles
+
+`[GET] /articles`:
+
+return `Article[]`
+
+<br>
+
+##### Get Article by ID
+
+`[GET] /articles/:id`
+
+return `Article`
+
+<br>
+
+##### Update Article
+
+`[PATCH] /articles/:id`
+
+body:
+
+```
+{
+    "title": string,
+    "content": string
+}
+```
+
+return `Article`
+
+<br>
+
+##### Delete Article
+
+`[DELETE] /articles/:id`
+
+return `Article`
 
 <br>
 
