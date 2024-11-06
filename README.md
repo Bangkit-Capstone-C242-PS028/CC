@@ -1,3 +1,19 @@
+## Project Setup
+
+1. Add `.env` file in root directory follow `.env.example`
+
+2. Install dependencies
+
+```bash
+npm install
+```
+
+3. Run the project
+
+```bash
+npm run start
+```
+
 ## API Documentation
 
 ### User Authentication
@@ -10,8 +26,11 @@ body:
     "role": "DOCTOR" | "PATIENT",
     "email": string,
     "password": string,
+    "confirmPassword": string,
     "firstName": string,
     "lastName": string
+    "dob": ISO8601 Date,
+    "address": string
 }
 ```
 

@@ -6,6 +6,7 @@ import {
   Matches,
   IsEnum,
   IsAlpha,
+  IsISO8601,
 } from 'class-validator';
 
 enum Role {
@@ -13,7 +14,7 @@ enum Role {
   DOCTOR = 'DOCTOR',
 }
 
-export class UserDto {
+export class UserSignupDto {
   @IsNotEmpty()
   @IsEnum(Role, { each: true })
   role: Role;
@@ -31,6 +32,14 @@ export class UserDto {
   password: string;
 
   @IsNotEmpty()
+  @MinLength(8)
+  @MaxLength(20)
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,20}$/, {
+    message: 'password too weak',
+  })
+  confirmPassword: string;
+
+  @IsNotEmpty()
   @MinLength(2)
   @MaxLength(20)
   @IsAlpha()
@@ -41,4 +50,11 @@ export class UserDto {
   @MaxLength(20)
   @IsAlpha()
   lastName: string;
+
+  @IsNotEmpty()
+  @IsISO8601()
+  dob: Date;
+
+  @IsNotEmpty()
+  address: string;
 }

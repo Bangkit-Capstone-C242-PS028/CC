@@ -20,4 +20,14 @@ export class AppController {
   goodEvening() {
     return 'Good Evening!';
   }
+
+  @Get()
+  sayHello() {
+    console.log(typeof process.env.DB_HOST);
+    console.log(typeof process.env.DB_PORT);
+    console.log(typeof process.env.DB_USERNAME);
+    console.log(typeof process.env.DB_PASSWORD);
+    console.log(typeof process.env.DB_NAME);
+    return 'Hello!';
+  }
 }
