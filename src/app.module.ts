@@ -5,7 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { FirebaseAdmin } from '../config/firebase.setup';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './typeorm/entities/User';
+import { Doctor } from './typeorm/entities/Doctor';
+import { Patient } from './typeorm/entities/Patient';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { User } from './typeorm/entities/User';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User],
+      entities: [Doctor, Patient],
       synchronize: true,
     }),
 

@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsAlpha,
   IsISO8601,
+  ValidateIf,
 } from 'class-validator';
 
 enum Role {
@@ -57,4 +58,12 @@ export class UserSignupDto {
 
   @IsNotEmpty()
   address: string;
+
+  @ValidateIf((o) => o.role === Role.DOCTOR)
+  @IsNotEmpty()
+  specialization: string;
+
+  @ValidateIf((o) => o.role === Role.DOCTOR)
+  @IsNotEmpty()
+  workplace: string;
 }

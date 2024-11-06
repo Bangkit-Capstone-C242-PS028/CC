@@ -1,15 +1,12 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity({ name: 'users' })
-export class User {
+@Entity({ name: 'patients' })
+export class Patient {
   @PrimaryColumn()
   uid: string;
 
   @Column()
   email: string;
-
-  @Column()
-  role: string;
 
   @Column()
   firstName: string;
