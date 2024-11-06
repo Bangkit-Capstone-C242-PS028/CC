@@ -18,7 +18,8 @@ npm run start
 
 ### User Authentication
 
-`[POST] signup`:
+`[POST] /users/signup`:
+
 body:
 
 ```

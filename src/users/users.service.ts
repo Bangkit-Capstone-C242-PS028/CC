@@ -7,7 +7,7 @@ import { Doctor } from './entities/doctor.entity';
 import { Patient } from './entities/patient.entity';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(
     private readonly admin: FirebaseAdmin,
 
@@ -50,7 +50,6 @@ export class UserService {
       specialization,
       workplace,
     } = userRequest;
-    console.log(userRequest);
     const newUser = this.doctorRepository.create({
       uid,
       email,

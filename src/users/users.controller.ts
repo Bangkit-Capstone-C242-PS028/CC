@@ -1,12 +1,12 @@
 import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
-import { UserService } from './users.service';
 import { UserSignupDto } from './dto/user-signup';
 import { SignUpUserParams } from 'src/utils/types';
 import { ValidateSignupUserPipe } from 'src/pipes/validate-signup-user.pipe';
+import { UsersService } from './users.service';
 
-@Controller('user')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
   @Post('/signup')
   signup(@Body(ValidateSignupUserPipe) userRequest: UserSignupDto) {
@@ -24,6 +24,6 @@ export class UserController {
       specialization: userRequest.specialization || null,
       workplace: userRequest.workplace || null,
     };
-    return this.userService.createUser(userDetail);
+    return this.usersService.createUser(userDetail);
   }
 }
