@@ -6,4 +6,6 @@ export type SignUpUserParams = {
   lastName: string;
   dob: Date;
   address: string;
+  specialization?: string;
+  workplace?: string;
 };

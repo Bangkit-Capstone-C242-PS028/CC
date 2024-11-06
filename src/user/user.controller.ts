@@ -21,6 +21,8 @@ export class UserController {
       lastName: userRequest.lastName,
       dob: userRequest.dob,
       address: userRequest.address,
+      specialization: userRequest.specialization || null,
+      workplace: userRequest.workplace || null,
     };
     return this.userService.createUser(userDetail);
   }
