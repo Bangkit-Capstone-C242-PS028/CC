@@ -1,13 +1,27 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserDto } from './dto/user.dto';
+import { UserSignupDto } from './dto/UserSignup.dto';
+import { SignUpUserParams } from 'src/utils/types';
+import { ValidateSignupUserPipe } from 'src/pipes/validate-signup-user.pipe';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('/signup')
-  signup(@Body() userRequest: UserDto) {
-    return this.userService.createUser(userRequest);
+  signup(@Body(ValidateSignupUserPipe) userRequest: UserSignupDto) {
+    if (userRequest.password !== userRequest.confirmPassword) {
+      throw new BadRequestException('Password does not match');
+    }
+    const userDetail: SignUpUserParams = {
+      email: userRequest.email,
+      password: userRequest.password,
+      role: userRequest.role,
+      firstName: userRequest.firstName,
+      lastName: userRequest.lastName,
+      dob: userRequest.dob,
+      address: userRequest.address,
+    };
+    return this.userService.createUser(userDetail);
   }
 }

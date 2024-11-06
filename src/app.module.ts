@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { FirebaseAdmin } from '../config/firebase.setup';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './typeorm/entities/User';
 
 @Module({
   imports: [
@@ -11,6 +13,17 @@ import { FirebaseAdmin } from '../config/firebase.setup';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      entities: [User],
+      synchronize: true,
+    }),
+
     UserModule,
   ],
   controllers: [AppController],
