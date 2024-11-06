@@ -18,6 +18,8 @@ npm run start
 
 ### User Authentication
 
+#### Signup
+
 `[POST] /users/signup`:
 
 body:
@@ -49,6 +51,76 @@ body:
 ```
 
 return `UserRecord`
+
+<br>
+
+#### Articles
+
+```
+POST   /articles                          - Create a new article (DOCTOR only)
+GET    /articles?page=1&limit=10          - Get all articles (DOCTOR, PATIENT)
+GET    /articles/:id?includeAuthor=true   - Get a specific article (DOCTOR, PATIENT)
+PATCH  /articles/:id                      - Update an article (DOCTOR only, must be author)
+DELETE /articles/:id                      - Delete an article (DOCTOR only, must be author)
+```
+
+<br>
+
+##### Create Article
+
+`[POST] /articles`:
+
+body:
+
+```
+{
+    "title": string,
+    "content": string
+}
+```
+
+return `Article`
+
+<br>
+
+##### Get All Articles
+
+`[GET] /articles`:
+
+return `Article[]`
+
+<br>
+
+##### Get Article by ID
+
+`[GET] /articles/:id`
+
+return `Article`
+
+<br>
+
+##### Update Article
+
+`[PATCH] /articles/:id`
+
+body:
+
+```
+{
+    "title": string,
+    "content": string
+}
+```
+
+return `Article`
+
+<br>
+
+##### Delete Article
+
+`[DELETE] /articles/:id`
+
+return `Article`
 
 <br>
 

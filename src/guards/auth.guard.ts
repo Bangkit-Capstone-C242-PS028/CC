@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { FirebaseAdmin } from '../../config/firebase.setup';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -15,17 +16,23 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const app = this.admin.setup();
-    const idToken = context.getArgs()[0]?.headers?.authorization.split(' ')[1];
+    const request = context.switchToHttp().getRequest();
+    const token = this.extractTokenFromHeader(request);
 
+    if (!token) {
+      throw new UnauthorizedException();
+    }
+
+    const app = this.admin.setup();
     const permissions = this.reflector.get<string[]>(
       'permissions',
       context.getHandler(),
     );
     try {
-      const claims = await app.auth().verifyIdToken(idToken);
+      const decodedToken = await app.auth().verifyIdToken(token);
 
-      if (permissions.includes(claims.role)) {
+      if (permissions.includes(decodedToken.role)) {
+        request.user = decodedToken;
         return true;
       }
       throw new UnauthorizedException();
@@ -33,5 +40,10 @@ export class AuthGuard implements CanActivate {
       console.log('Error', error);
       throw new UnauthorizedException();
     }
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }
