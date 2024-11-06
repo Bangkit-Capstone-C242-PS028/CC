@@ -3,8 +3,8 @@ import { FirebaseAdmin } from 'config/firebase.setup';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Doctor } from 'src/typeorm/entities/Doctor';
-import { Patient } from 'src/typeorm/entities/Patient';
+import { Doctor } from './entities/doctor.entity';
+import { Patient } from './entities/patient.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Doctor, Patient])],

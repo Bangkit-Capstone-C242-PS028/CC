@@ -5,8 +5,9 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { FirebaseAdmin } from '../config/firebase.setup';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Doctor } from './typeorm/entities/Doctor';
-import { Patient } from './typeorm/entities/Patient';
+import { Doctor } from './user/entities/doctor.entity';
+import { Patient } from './user/entities/patient.entity';
+import { ArticleModule } from './article/article.module';
 
 @Module({
   imports: [
@@ -26,6 +27,8 @@ import { Patient } from './typeorm/entities/Patient';
     }),
 
     UserModule,
+
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [AppService, FirebaseAdmin],

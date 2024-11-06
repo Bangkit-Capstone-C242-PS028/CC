@@ -3,8 +3,8 @@ import { FirebaseAdmin } from '../../config/firebase.setup';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SignUpUserParams } from 'src/utils/types';
-import { Doctor } from 'src/typeorm/entities/Doctor';
-import { Patient } from 'src/typeorm/entities/Patient';
+import { Doctor } from './entities/doctor.entity';
+import { Patient } from './entities/patient.entity';
 
 @Injectable()
 export class UserService {
