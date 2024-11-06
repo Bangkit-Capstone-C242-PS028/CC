@@ -23,12 +23,25 @@ body:
 
 ```
 {
-    "role": "DOCTOR" | "PATIENT",
+    "role": "DOCTOR",
     "email": string,
     "password": string,
     "confirmPassword": string,
     "firstName": string,
     "lastName": string
+    "dob": ISO8601 Date,
+    "address": string,
+    "specialization": string,
+    "workplace": string
+}
+|
+{
+    "role": "PATIENT",
+    "email": string,
+    "password": string,
+    "confirmPassword": string,
+    "firstName": string,
+    "lastName": string,
     "dob": ISO8601 Date,
     "address": string
 }
