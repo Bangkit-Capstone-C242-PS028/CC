@@ -1,5 +1,5 @@
 import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserService } from './users.service';
 import { UserSignupDto } from './dto/user-signup';
 import { SignUpUserParams } from 'src/utils/types';
 import { ValidateSignupUserPipe } from 'src/pipes/validate-signup-user.pipe';

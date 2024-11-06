@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { FirebaseAdmin } from 'config/firebase.setup';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
+import { UserController } from './users.controller';
+import { UserService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Doctor } from './entities/doctor.entity';
 import { Patient } from './entities/patient.entity';
