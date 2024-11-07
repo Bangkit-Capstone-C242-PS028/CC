@@ -46,7 +46,7 @@ export class ArticlesService {
     return this.articleRepository.find({
       skip,
       take: limit,
-      relations: { author: true },
+      relations: { author: { user: true } },
       order: { id: 'DESC' },
     });
   }
@@ -54,7 +54,7 @@ export class ArticlesService {
   async findOne(id: number, includeAuthor = true) {
     const article = await this.articleRepository.findOne({
       where: { id },
-      relations: includeAuthor ? { author: true } : undefined,
+      relations: includeAuthor ? { author: { user: true } } : undefined,
     });
     if (!article) {
       throw new NotFoundException('Article not found');
@@ -83,7 +83,8 @@ export class ArticlesService {
       ...articleDetails,
       updated_at: new Date(),
     });
-    return article;
+
+    return this.findOne(id);
   }
 
   async remove(id: number, doctor_id: string) {

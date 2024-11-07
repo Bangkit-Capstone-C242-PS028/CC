@@ -1,5 +1,12 @@
+import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { Doctor } from 'src/users/entities/doctor.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'articles' })
 export class Article {
@@ -20,4 +27,7 @@ export class Article {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  @OneToMany(() => Favorite, (favorite) => favorite.article)
+  favorites: Favorite[];
 }
