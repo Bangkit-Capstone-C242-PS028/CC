@@ -22,3 +22,15 @@ export type UpdateArticleParams = {
   title?: string;
   content?: string;
 };
+
+// Create Favorite Params
+export type CreateFavoriteParams = {
+  articleId: number;
+  userId: string;
+};
+
+// Delete Favorite Params
+export type DeleteFavoriteParams = {
+  articleId: number;
+  userId: string;
+};

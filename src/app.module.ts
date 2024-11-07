@@ -9,6 +9,9 @@ import { Doctor } from './users/entities/doctor.entity';
 import { Patient } from './users/entities/patient.entity';
 import { ArticlesModule } from './articles/articles.module';
 import { Article } from './articles/entities/article.entity';
+import { FavoritesModule } from './favorites/favorites.module';
+import { Favorite } from './favorites/entities/favorite.entity';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -23,13 +26,15 @@ import { Article } from './articles/entities/article.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Doctor, Patient, Article],
+      entities: [Doctor, Patient, Article, Favorite, User],
       synchronize: true,
     }),
 
     UserModule,
 
     ArticlesModule,
+
+    FavoritesModule,
   ],
   controllers: [AppController],
   providers: [AppService, FirebaseAdmin],

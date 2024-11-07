@@ -5,14 +5,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SignUpUserParams } from 'src/utils/types';
 import { Doctor } from './entities/doctor.entity';
 import { Patient } from './entities/patient.entity';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly admin: FirebaseAdmin,
 
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
     @InjectRepository(Doctor)
     private readonly doctorRepository: Repository<Doctor>,
+
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
   ) {}
@@ -28,57 +33,66 @@ export class UsersService {
       });
       await app.auth().setCustomUserClaims(createdUser.uid, { role });
 
-      if (role === 'DOCTOR') {
-        await this.insertDoctor(userRequest, createdUser.uid);
-      } else if (role === 'PATIENT') {
-        await this.insertPatient(userRequest, createdUser.uid);
-      }
-
+      await this.insertUser(userRequest, createdUser.uid);
       return createdUser;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  private async insertDoctor(userRequest: SignUpUserParams, uid: string) {
-    const {
-      email,
-      firstName,
-      lastName,
-      dob,
-      address,
-      specialization,
-      workplace,
-    } = userRequest;
-    const newUser = this.doctorRepository.create({
+  private async insertUser(userRequest: SignUpUserParams, uid: string) {
+    const { email, firstName, lastName, dob, address, role } = userRequest;
+    const newUser = this.userRepository.create({
       uid,
       email,
+      role,
       firstName,
       lastName,
       dob,
       address,
-      specialization,
-      workplace,
       createdAt: new Date(),
       updatedAt: new Date(),
       points: 0,
     });
-    await this.doctorRepository.save(newUser);
+    await this.userRepository.save(newUser);
+
+    if (role === 'DOCTOR') {
+      await this.insertDoctor(userRequest, uid, newUser);
+    } else if (role === 'PATIENT') {
+      await this.insertPatient(userRequest, uid, newUser);
+    }
   }
 
-  private async insertPatient(userRequest: SignUpUserParams, uid: string) {
-    const { email, firstName, lastName, dob, address } = userRequest;
-    const newUser = this.patientRepository.create({
+  private async insertDoctor(
+    userRequest: SignUpUserParams,
+    uid: string,
+    user: User,
+  ) {
+    const { specialization, workplace } = userRequest;
+    const newDoctor = this.doctorRepository.create({
       uid,
-      email,
-      firstName,
-      lastName,
-      dob,
-      address,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      points: 0,
+      user,
+      specialization,
+      workplace,
     });
-    await this.patientRepository.save(newUser);
+    await this.doctorRepository.save(newDoctor);
+
+    user.doctor = newDoctor;
+    await this.userRepository.save(user);
+  }
+
+  private async insertPatient(
+    userRequest: SignUpUserParams,
+    uid: string,
+    user: User,
+  ) {
+    const newPatient = this.patientRepository.create({
+      uid,
+      user,
+    });
+    await this.patientRepository.save(newPatient);
+
+    user.patient = newPatient;
+    await this.userRepository.save(user);
   }
 }

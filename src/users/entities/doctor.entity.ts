@@ -1,34 +1,14 @@
 import { Article } from 'src/articles/entities/article.entity';
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity({ name: 'doctors' })
 export class Doctor {
   @PrimaryColumn()
   uid: string;
 
-  @Column()
-  email: string;
-
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
-  @Column()
-  dob: Date;
-
-  @Column()
-  address: string;
-
-  @Column()
-  createdAt: Date;
-
-  @Column()
-  updatedAt: Date;
-
-  @Column()
-  points: number;
+  @OneToOne(() => User, (user) => user.doctor)
+  user: User;
 
   @Column()
   specialization: string;
