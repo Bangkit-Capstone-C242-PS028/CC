@@ -79,7 +79,10 @@ export class ArticlesService {
       );
     }
 
-    await this.articleRepository.update(id, { ...articleDetails });
+    await this.articleRepository.update(id, {
+      ...articleDetails,
+      updated_at: new Date(),
+    });
     return article;
   }
 
