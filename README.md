@@ -14,113 +14,127 @@ npm install
 npm run start
 ```
 
-## API Documentation
+# DermaScan API Documentation
 
-### User Authentication
+## Authentication
 
-#### Signup
+All endpoints except signup/signin require Firebase authentication token in the Authorization header:
 
-`[POST] /users/signup`:
-
-body:
-
+```http
+Authorization: Bearer <jwt>
 ```
+
+## Endpoints
+
+### Users
+
+```http
+POST /users/signup
+```
+
+Register a new user (patient or doctor)
+
+- Body:
+
+```json
 {
-    "role": "DOCTOR",
-    "email": string,
-    "password": string,
-    "confirmPassword": string,
-    "firstName": string,
-    "lastName": string
-    "dob": ISO8601 Date,
-    "address": string,
-    "specialization": string,
-    "workplace": string
-}
-|
-{
-    "role": "PATIENT",
-    "email": string,
-    "password": string,
-    "confirmPassword": string,
-    "firstName": string,
-    "lastName": string,
-    "dob": ISO8601 Date,
-    "address": string
-}
-```
-
-return `UserRecord`
-
-<br>
-
-#### Articles
-
-```
-POST   /articles                          - Create a new article (DOCTOR only)
-GET    /articles?page=1&limit=10          - Get all articles (DOCTOR, PATIENT)
-GET    /articles/:id?includeAuthor=true   - Get a specific article (DOCTOR, PATIENT)
-PATCH  /articles/:id                      - Update an article (DOCTOR only, must be author)
-DELETE /articles/:id                      - Delete an article (DOCTOR only, must be author)
-```
-
-<br>
-
-##### Create Article
-
-`[POST] /articles`:
-
-body:
-
-```
-{
-    "title": string,
-    "content": string
+  "role": "PATIENT" | "DOCTOR",
+  "email": "string",
+  "password": "string",
+  "confirmPassword": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "dob": "YYYY-MM-DD",
+  "address": "string",
+  "specialization": "string", // required if role is DOCTOR
+  "workplace": "string" // required if role is DOCTOR
 }
 ```
 
-return `Article`
+### Articles
 
-<br>
-
-##### Get All Articles
-
-`[GET] /articles`:
-
-return `Article[]`
-
-<br>
-
-##### Get Article by ID
-
-`[GET] /articles/:id`
-
-return `Article`
-
-<br>
-
-##### Update Article
-
-`[PATCH] /articles/:id`
-
-body:
-
+```http
+GET /articles?page=1&limit=10
 ```
+
+Get paginated list of articles
+
+```http
+GET /articles/:id
+```
+
+Get specific article by ID
+
+```http
+POST /articles
+```
+
+Create new article (doctors only)
+
+- Body:
+
+```json
 {
-    "title": string,
-    "content": string
+  "title": "string",
+  "content": "string"
 }
 ```
 
-return `Article`
+```http
+PATCH /articles/:id
+```
 
-<br>
+Update article (author only)
 
-##### Delete Article
+- Body:
 
-`[DELETE] /articles/:id`
+```json
+{
+  "title": "string",
+  "content": "string"
+}
+```
 
-return `Article`
+```http
+DELETE /articles/:id
+```
+
+Delete article (author only)
+
+### Favorites
+
+```http
+POST /favorites
+```
+
+Add article to favorites
+
+- Body:
+
+```json
+{
+  "articleId": "number",
+  "userId": "string"
+}
+```
+
+```http
+GET /favorites/users/:id
+```
+
+Get user's favorite articles
+
+```http
+GET /favorites/articles/:id
+```
+
+Get users who favorited an article
+
+```http
+DELETE /favorites/users/:userId/articles/:articleId
+```
+
+Remove article from favorites
 
 <br>
 
