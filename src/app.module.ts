@@ -12,6 +12,9 @@ import { Article } from './articles/entities/article.entity';
 import { FavoritesModule } from './favorites/favorites.module';
 import { Favorite } from './favorites/entities/favorite.entity';
 import { User } from './users/entities/user.entity';
+import { ForumsModule } from './forums/forums.module';
+import { Forum } from './forums/entities/forum.entity';
+import { ForumReply } from './forums/entities/forum-reply.entity';
 
 @Module({
   imports: [
@@ -26,7 +29,7 @@ import { User } from './users/entities/user.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Doctor, Patient, Article, Favorite, User],
+      entities: [User, Doctor, Patient, Article, Favorite, Forum, ForumReply],
       synchronize: true,
     }),
 
@@ -35,6 +38,8 @@ import { User } from './users/entities/user.entity';
     ArticlesModule,
 
     FavoritesModule,
+
+    ForumsModule,
   ],
   controllers: [AppController],
   providers: [AppService, FirebaseAdmin],

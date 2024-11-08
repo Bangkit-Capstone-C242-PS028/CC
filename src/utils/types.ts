@@ -34,3 +34,48 @@ export type DeleteFavoriteParams = {
   articleId: number;
   userId: string;
 };
+
+// Create Forum Params
+export type CreateForumParams = {
+  title: string;
+  content: string;
+  patientUid: string;
+};
+
+// Update Forum Params
+export type UpdateForumParams = {
+  id: number;
+  title?: string;
+  content?: string;
+  patientUid?: string;
+};
+
+// Delete Forum Params
+export type DeleteForumParams = {
+  id: number;
+  patientUid: string;
+};
+
+// Create Forum Reply Params
+export type CreateForumReplyParams = {
+  content: string;
+  forumId: number;
+  responderUid: string;
+  responderRole: string;
+};
+
+export type UpdateForumReplyParams = {
+  forumId: number;
+  replyId: number;
+  content: string;
+  userUid: string;
+  userRole: string;
+};
+
+// Delete Forum Reply Params
+export type DeleteForumReplyParams = {
+  forumId: number;
+  replyId: number;
+  userUid: string;
+  userRole: string;
+};
