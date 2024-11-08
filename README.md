@@ -14,27 +14,17 @@ npm install
 npm run start
 ```
 
-# DermaScan API Documentation
-
-## Authentication
-
-All endpoints except signup/signin require Firebase authentication token in the Authorization header:
-
-```http
-Authorization: Bearer <jwt>
-```
-
-## Endpoints
+## API Documentation
 
 ### Users
+
+#### Register User
 
 ```http
 POST /users/signup
 ```
 
-Register a new user (patient or doctor)
-
-- Body:
+Body:
 
 ```json
 {
@@ -51,15 +41,33 @@ Register a new user (patient or doctor)
 }
 ```
 
+#### Update User Profile
+
+```http
+PATCH /users/:uid
+```
+
+Body:
+
+```json
+{
+  "firstName": "string",
+  "lastName": "string",
+  "address": "string",
+  "specialization": "string", // DOCTOR only
+  "workplace": "string" // DOCTOR only
+}
+```
+
 ### Articles
+
+#### Create Article (DOCTOR only)
 
 ```http
 POST /articles
 ```
 
-Create new article (doctors only)
-
-- Body:
+Body:
 
 ```json
 {
@@ -68,25 +76,25 @@ Create new article (doctors only)
 }
 ```
 
+#### Get All Articles (DOCTOR, PATIENT)
+
 ```http
-GET /articles
+GET /articles?page=1&limit=10
 ```
 
-Get all articles
+#### Get Article by ID (DOCTOR, PATIENT)
 
 ```http
 GET /articles/:id
 ```
 
-Get article by ID
+#### Update Article (DOCTOR only)
 
 ```http
 PATCH /articles/:id
 ```
 
-Update article (author only)
-
-- Body:
+Body:
 
 ```json
 {
@@ -95,21 +103,93 @@ Update article (author only)
 }
 ```
 
+### Forums
+
+#### Create Forum (PATIENT only)
+
 ```http
-DELETE /articles/:id
+POST /forums
 ```
 
-Delete article (author only)
+Body:
+
+```json
+{
+  "title": "string",
+  "content": "string"
+}
+```
+
+#### Get All Forums (DOCTOR, PATIENT)
+
+```http
+GET /forums?page=1&limit=10
+```
+
+#### Get Forum by ID (DOCTOR, PATIENT)
+
+```http
+GET /forums/:id
+```
+
+#### Update Forum (PATIENT only)
+
+```http
+PATCH /forums/:id
+```
+
+Body:
+
+```json
+{
+  "title": "string",
+  "content": "string"
+}
+```
+
+#### Create Forum Reply (DOCTOR, PATIENT)
+
+```http
+POST /forums/:forumId/replies
+```
+
+Body:
+
+```json
+{
+  "content": "string"
+}
+```
+
+#### Update Forum Reply (DOCTOR, PATIENT)
+
+```http
+PATCH /forums/:forumId/replies/:replyId
+```
+
+Body:
+
+```json
+{
+  "content": "string"
+}
+```
+
+#### Get Forum Replies (DOCTOR, PATIENT)
+
+```http
+GET /forums/:forumId/replies?page=1&limit=10
+```
 
 ### Favorites
+
+#### Add Article to Favorites (DOCTOR, PATIENT)
 
 ```http
 POST /favorites
 ```
 
-Add article to favorites
-
-- Body:
+Body:
 
 ```json
 {
@@ -118,115 +198,30 @@ Add article to favorites
 }
 ```
 
-```http
-GET /favorites/users/:id
-```
-
-Get user's favorite articles
+#### Get User's Favorites (DOCTOR, PATIENT)
 
 ```http
-GET /favorites/articles/:id
+GET /favorites/users/:id?page=1&limit=10
 ```
 
-Get users who favorited an article
+#### Get Article's Favorites (DOCTOR, PATIENT)
 
 ```http
-DELETE /favorites/users/:userId/articles/:articleId
+GET /favorites/articles/:id?page=1&limit=10
 ```
 
-Remove article from favorites
+### Authentication
 
-### Forums
+All endpoints except `/users/signup` require Firebase authentication token:
 
 ```http
-POST /forums
+Authorization: Bearer <firebase_jwt_token>
 ```
 
-Create new forum (patients only)
+### Common Query Parameters
 
-- Body:
-
-```json
-{
-  "title": "string",
-  "content": "string"
-}
-```
-
-```http
-GET /forums
-```
-
-Get all forums (paginated)
-
-```http
-GET /forums/:id
-```
-
-Get forum by ID with replies
-
-```http
-PATCH /forums/:id
-```
-
-Update forum (patient owner only)
-
-- Body:
-
-```json
-{
-  "title": "string",
-  "content": "string"
-}
-```
-
-```http
-DELETE /forums/:id
-```
-
-Delete forum (patient owner only)
-
-### Forum Replies
-
-```http
-POST /forums/:forumId/replies
-```
-
-Create forum reply (doctors and patients)
-
-- Body:
-
-```json
-{
-  "content": "string"
-}
-```
-
-```http
-GET /forums/:forumId/replies
-```
-
-Get forum replies (paginated)
-
-```http
-PATCH /forums/:forumId/replies/:replyId
-```
-
-Update reply (owner only)
-
-- Body:
-
-```json
-{
-  "content": "string"
-}
-```
-
-```http
-DELETE /forums/:forumId/replies/:replyId
-```
-
-Delete reply (owner only)
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 10, max: 100)
 
 <br>
 

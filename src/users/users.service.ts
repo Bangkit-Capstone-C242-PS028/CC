@@ -16,6 +16,8 @@ import {
 import { Doctor } from './entities/doctor.entity';
 import { Patient } from './entities/patient.entity';
 import { User } from './entities/user.entity';
+import { DEFAULT_PAGE, getPaginationParams } from 'src/utils/pagination.helper';
+import { DEFAULT_LIMIT } from 'src/utils/pagination.helper';
 
 @Injectable()
 export class UsersService {
@@ -105,8 +107,8 @@ export class UsersService {
   }
 
   async findAll(params: FindAllUsersParams) {
-    const { role, page = 1, limit = 10 } = params;
-    const skip = (page - 1) * limit;
+    const { role, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
+    const { skip, take } = getPaginationParams(page, limit);
 
     const queryBuilder = this.userRepository
       .createQueryBuilder('user')
@@ -117,17 +119,17 @@ export class UsersService {
       queryBuilder.where('user.role = :role', { role });
     }
 
-    const [users, total] = await queryBuilder
-      .take(limit)
+    const [data, total] = await queryBuilder
+      .take(take)
       .skip(skip)
       .getManyAndCount();
 
     return {
-      data: users,
+      data,
       meta: {
         total,
         page,
-        lastPage: Math.ceil(total / limit),
+        lastPage: Math.ceil(total / take),
       },
     };
   }

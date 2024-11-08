@@ -15,10 +15,8 @@ export type FindUserParams = {
   uid: string;
 };
 
-export type FindAllUsersParams = {
+export type FindAllUsersParams = PaginationParams & {
   role?: string;
-  page?: number;
-  limit?: number;
 };
 
 export type UpdateUserParams = {
@@ -53,11 +51,6 @@ export type FindArticleParams = {
   id: number;
 };
 
-export type FindAllArticlesParams = {
-  page?: number;
-  limit?: number;
-};
-
 export type DeleteArticleParams = {
   id: number;
   authorUid: string;
@@ -77,11 +70,11 @@ export type DeleteFavoriteParams = {
 
 export type FindUserFavoritesParams = {
   userId: string;
-};
+} & PaginationParams;
 
 export type FindArticleFavoritesParams = {
   articleId: number;
-};
+} & PaginationParams;
 
 // Create Forum Params
 export type CreateForumParams = {
@@ -129,8 +122,20 @@ export type DeleteForumReplyParams = {
 };
 
 // Find Replies Params
-export type FindRepliesParams = {
+export type FindRepliesParams = PaginationParams & {
   forumId: number;
+};
+
+export type PaginationParams = {
   page?: number;
   limit?: number;
+};
+
+export type PaginatedResponse<T> = {
+  data: T[];
+  meta: {
+    total: number;
+    page: number;
+    lastPage: number;
+  };
 };

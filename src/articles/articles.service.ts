@@ -10,10 +10,16 @@ import {
   CreateArticleParams,
   UpdateArticleParams,
   FindArticleParams,
-  FindAllArticlesParams,
   DeleteArticleParams,
+  PaginationParams,
+  PaginatedResponse,
 } from 'src/utils/types';
 import { Doctor } from 'src/users/entities/doctor.entity';
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_PAGE,
+  getPaginationParams,
+} from 'src/utils/pagination.helper';
 
 @Injectable()
 export class ArticlesService {
@@ -44,23 +50,23 @@ export class ArticlesService {
     return this.articleRepository.save(article);
   }
 
-  async findAll(params: FindAllArticlesParams) {
-    const { page = 1, limit = 10 } = params;
-    const skip = (page - 1) * limit;
+  async findAll(params: PaginationParams): Promise<PaginatedResponse<Article>> {
+    const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
+    const { skip, take } = getPaginationParams(page, limit);
 
-    const [articles, total] = await this.articleRepository.findAndCount({
-      relations: { author: { user: true } },
-      take: limit,
+    const [data, total] = await this.articleRepository.findAndCount({
+      take,
       skip,
+      relations: ['author'],
       order: { created_at: 'DESC' },
     });
 
     return {
-      data: articles,
+      data,
       meta: {
         total,
         page,
-        lastPage: Math.ceil(total / limit),
+        lastPage: Math.ceil(total / take),
       },
     };
   }

@@ -11,7 +11,13 @@ import {
   DeleteFavoriteParams,
   FindUserFavoritesParams,
   FindArticleFavoritesParams,
+  PaginatedResponse,
 } from 'src/utils/types';
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_PAGE,
+  getPaginationParams,
+} from 'src/utils/pagination.helper';
 
 @Injectable()
 export class FavoritesService {
@@ -43,20 +49,52 @@ export class FavoritesService {
     return this.favoriteRepository.save(favorite);
   }
 
-  async findUserFavorites(params: FindUserFavoritesParams) {
-    const { userId } = params;
-    return this.favoriteRepository.find({
+  async findUserFavorites(
+    params: FindUserFavoritesParams,
+  ): Promise<PaginatedResponse<Favorite>> {
+    const { userId, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
+    const { skip, take } = getPaginationParams(page, limit);
+
+    const [data, total] = await this.favoriteRepository.findAndCount({
       where: { user: { uid: userId } },
       relations: { article: { author: { user: true } } },
+      take,
+      skip,
+      order: { created_at: 'DESC' },
     });
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / take),
+      },
+    };
   }
 
-  async findArticleFavorites(params: FindArticleFavoritesParams) {
-    const { articleId } = params;
-    return this.favoriteRepository.find({
+  async findArticleFavorites(
+    params: FindArticleFavoritesParams,
+  ): Promise<PaginatedResponse<Favorite>> {
+    const { articleId, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
+    const { skip, take } = getPaginationParams(page, limit);
+
+    const [data, total] = await this.favoriteRepository.findAndCount({
       where: { article: { id: articleId } },
       relations: { article: { author: { user: true } } },
+      take,
+      skip,
+      order: { created_at: 'DESC' },
     });
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / take),
+      },
+    };
   }
 
   async remove(params: DeleteFavoriteParams) {

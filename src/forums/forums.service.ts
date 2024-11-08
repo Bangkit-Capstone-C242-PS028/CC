@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -10,6 +9,8 @@ import {
   DeleteForumParams,
   DeleteForumReplyParams,
   FindRepliesParams,
+  PaginatedResponse,
+  PaginationParams,
   UpdateForumParams,
   UpdateForumReplyParams,
 } from 'src/utils/types';
@@ -20,6 +21,11 @@ import { Not, Repository } from 'typeorm';
 import { Doctor } from 'src/users/entities/doctor.entity';
 import { ForumReply } from './entities/forum-reply.entity';
 import { User } from 'src/users/entities/user.entity';
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_PAGE,
+  getPaginationParams,
+} from 'src/utils/pagination.helper';
 
 @Injectable()
 export class ForumsService {
@@ -55,17 +61,33 @@ export class ForumsService {
 
     return this.forumRepository.save(forum);
   }
-  findAll(page: number = 1, limit: number = 10) {
-    if (page < 1 || limit < 1) {
-      throw new BadRequestException('Invalid page or limit');
-    }
 
-    const skip = (page - 1) * limit;
+  async findAll(params: PaginationParams): Promise<PaginatedResponse<Forum>> {
+    const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
+    const { skip, take } = getPaginationParams(page, limit);
 
-    return this.forumRepository.find({
-      take: limit,
+    const [data, total] = await this.forumRepository.findAndCount({
+      take,
       skip,
+      relations: {
+        patient: {
+          user: true,
+        },
+        doctor: {
+          user: true,
+        },
+      },
+      order: { created_at: 'DESC' },
     });
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / take),
+      },
+    };
   }
 
   async findOne(id: number) {
@@ -141,8 +163,11 @@ export class ForumsService {
     return forum;
   }
 
-  async findReplies(findRepliesDetails: FindRepliesParams) {
-    const { forumId, page = 1, limit = 10 } = findRepliesDetails;
+  async findReplies(
+    params: FindRepliesParams,
+  ): Promise<PaginatedResponse<ForumReply>> {
+    const { forumId, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
+    const { skip, take } = getPaginationParams(page, limit);
 
     const forum = await this.forumRepository.findOne({
       where: { id: forumId },
@@ -152,15 +177,22 @@ export class ForumsService {
       throw new NotFoundException('Forum not found');
     }
 
-    const skip = (page - 1) * limit;
-
-    return this.forumReplyRepository.find({
+    const [data, total] = await this.forumReplyRepository.findAndCount({
       where: { forum_id: forumId },
       relations: ['responder'],
-      take: limit,
+      take,
       skip,
       order: { created_at: 'ASC' },
     });
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / take),
+      },
+    };
   }
 
   async createReply(params: CreateForumReplyParams) {

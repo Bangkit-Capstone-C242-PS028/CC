@@ -8,6 +8,8 @@ import {
   Delete,
   Req,
   Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ForumsService } from './forums.service';
 import { CreateForumDto } from './dto/create-forum.dto';
@@ -24,6 +26,7 @@ import {
 import { CreateForumReplyDto } from './dto/create-forum-reply.dto';
 import { UpdateForumReplyDto } from './dto/update-forum-reply.dto';
 import { FindRepliesParams } from 'src/utils/types';
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from 'src/utils/pagination.helper';
 
 @Controller('forums')
 export class ForumsController {
@@ -42,8 +45,13 @@ export class ForumsController {
 
   @Get()
   @Auth('DOCTOR', 'PATIENT')
-  findAll(@Query('page') page?: number, @Query('limit') limit?: number) {
-    return this.forumsService.findAll(page, limit);
+  findAll(
+    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
+    page: number,
+    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
+    limit: number,
+  ) {
+    return this.forumsService.findAll({ page, limit });
   }
 
   @Get(':id')
@@ -85,8 +93,10 @@ export class ForumsController {
   @Auth('DOCTOR', 'PATIENT')
   getReplies(
     @Param('forumId') forumId: string,
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
+    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
+    page: number,
+    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
+    limit: number,
   ) {
     const findRepliesParams: FindRepliesParams = {
       forumId: +forumId,

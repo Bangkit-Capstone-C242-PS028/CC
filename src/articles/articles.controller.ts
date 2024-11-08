@@ -8,6 +8,8 @@ import {
   Delete,
   Request,
   Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -17,9 +19,9 @@ import {
   CreateArticleParams,
   UpdateArticleParams,
   FindArticleParams,
-  FindAllArticlesParams,
   DeleteArticleParams,
 } from 'src/utils/types';
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from 'src/utils/pagination.helper';
 
 @Controller('articles')
 export class ArticlesController {
@@ -39,12 +41,13 @@ export class ArticlesController {
 
   @Get()
   @Auth('DOCTOR', 'PATIENT')
-  async findAll(@Query('page') page: number, @Query('limit') limit: number) {
-    const findAllArticlesDetails: FindAllArticlesParams = {
-      page,
-      limit,
-    };
-    return await this.articlesService.findAll(findAllArticlesDetails);
+  async findAll(
+    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
+    page: number,
+    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
+    limit: number,
+  ) {
+    return this.articlesService.findAll({ page, limit });
   }
 
   @Get(':id')

@@ -7,16 +7,15 @@ import {
   Delete,
   Req,
   ForbiddenException,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { CreateFavoriteDto } from './dto/create-favorite.dto';
 import { Auth } from 'src/decorators/auth.decorator';
-import {
-  CreateFavoriteParams,
-  FindUserFavoritesParams,
-  FindArticleFavoritesParams,
-  DeleteFavoriteParams,
-} from 'src/utils/types';
+import { CreateFavoriteParams, DeleteFavoriteParams } from 'src/utils/types';
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from 'src/utils/pagination.helper';
 
 @Controller('favorites')
 export class FavoritesController {
@@ -39,22 +38,30 @@ export class FavoritesController {
 
   @Get('users/:id')
   @Auth('PATIENT', 'DOCTOR')
-  findUserFavorites(@Param('id') id: string) {
-    const findUserFavoritesDetails: FindUserFavoritesParams = {
-      userId: id,
-    };
-    return this.favoritesService.findUserFavorites(findUserFavoritesDetails);
+  findUserFavorites(
+    @Param('id') id: string,
+    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
+    page: number,
+    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
+    limit: number,
+  ) {
+    return this.favoritesService.findUserFavorites({ userId: id, page, limit });
   }
 
   @Get('articles/:id')
   @Auth('PATIENT', 'DOCTOR')
-  findArticleFavorites(@Param('id') id: string) {
-    const findArticleFavoritesDetails: FindArticleFavoritesParams = {
+  findArticleFavorites(
+    @Param('id') id: string,
+    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
+    page: number,
+    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
+    limit: number,
+  ) {
+    return this.favoritesService.findArticleFavorites({
       articleId: +id,
-    };
-    return this.favoritesService.findArticleFavorites(
-      findArticleFavoritesDetails,
-    );
+      page,
+      limit,
+    });
   }
 
   @Delete('users/:userId/articles/:articleId')
