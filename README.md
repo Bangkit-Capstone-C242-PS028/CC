@@ -44,7 +44,7 @@ Register a new user (patient or doctor)
   "confirmPassword": "string",
   "firstName": "string",
   "lastName": "string",
-  "dob": "YYYY-MM-DD",
+  "dob": "ISO 8601 date string",
   "address": "string",
   "specialization": "string", // required if role is DOCTOR
   "workplace": "string" // required if role is DOCTOR
