@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -7,94 +6,122 @@ import {
 import { Article } from './entities/article.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateArticleParams, UpdateArticleParams } from 'src/utils/types';
-import { FirebaseAdmin } from 'config/firebase.setup';
+import {
+  CreateArticleParams,
+  UpdateArticleParams,
+  FindArticleParams,
+  FindAllArticlesParams,
+  DeleteArticleParams,
+} from 'src/utils/types';
 import { Doctor } from 'src/users/entities/doctor.entity';
 
 @Injectable()
 export class ArticlesService {
   constructor(
-    private readonly admin: FirebaseAdmin,
-
     @InjectRepository(Article)
     private readonly articleRepository: Repository<Article>,
-
     @InjectRepository(Doctor)
     private readonly doctorRepository: Repository<Doctor>,
   ) {}
 
-  async create(articleDetails: CreateArticleParams, doctor_id: string) {
-    const doctor = await this.doctorRepository.findOneBy({ uid: doctor_id });
+  async create(params: CreateArticleParams) {
+    const { title, content, authorUid } = params;
+
+    const doctor = await this.doctorRepository.findOne({
+      where: { uid: authorUid },
+    });
+
     if (!doctor) {
       throw new NotFoundException('Doctor not found');
     }
 
     const article = this.articleRepository.create({
-      ...articleDetails,
+      title,
+      content,
       author: doctor,
     });
+
     return this.articleRepository.save(article);
   }
 
-  async findAll(page = 1, limit = 10) {
-    if (page < 1 || limit < 1) {
-      throw new BadRequestException('Invalid pagination parameters');
-    }
-
+  async findAll(params: FindAllArticlesParams) {
+    const { page = 1, limit = 10 } = params;
     const skip = (page - 1) * limit;
 
-    return this.articleRepository.find({
-      skip,
-      take: limit,
+    const [articles, total] = await this.articleRepository.findAndCount({
       relations: { author: { user: true } },
-      order: { id: 'DESC' },
+      take: limit,
+      skip,
+      order: { created_at: 'DESC' },
     });
+
+    return {
+      data: articles,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 
-  async findOne(id: number, includeAuthor = true) {
+  async findOne(params: FindArticleParams) {
+    const { id } = params;
     const article = await this.articleRepository.findOne({
       where: { id },
-      relations: includeAuthor ? { author: { user: true } } : undefined,
+      relations: { author: { user: true } },
     });
+
     if (!article) {
       throw new NotFoundException('Article not found');
     }
+
     return article;
   }
 
-  async update(
-    id: number,
-    articleDetails: UpdateArticleParams,
-    doctor_id: string,
-  ) {
-    const doctor = await this.doctorRepository.findOneBy({ uid: doctor_id });
-    if (!doctor) {
-      throw new NotFoundException('Doctor not found');
+  async update(params: UpdateArticleParams) {
+    const { id, title, content, authorUid } = params;
+
+    const article = await this.articleRepository.findOne({
+      where: { id },
+      relations: { author: true },
+    });
+
+    if (!article) {
+      throw new NotFoundException('Article not found');
     }
 
-    const article = await this.findOne(id);
-    if (article.author.uid !== doctor_id) {
+    if (article.author.uid !== authorUid) {
       throw new ForbiddenException(
         'You are not allowed to update this article',
       );
     }
 
     await this.articleRepository.update(id, {
-      ...articleDetails,
+      title,
+      content,
       updated_at: new Date(),
     });
 
-    return this.findOne(id);
+    return this.articleRepository.findOne({
+      where: { id },
+      relations: { author: { user: true } },
+    });
   }
 
-  async remove(id: number, doctor_id: string) {
-    const doctor = await this.doctorRepository.findOneBy({ uid: doctor_id });
-    if (!doctor) {
-      throw new NotFoundException('Doctor not found');
+  async remove(params: DeleteArticleParams) {
+    const { id, authorUid } = params;
+
+    const article = await this.articleRepository.findOne({
+      where: { id },
+      relations: { author: true },
+    });
+
+    if (!article) {
+      throw new NotFoundException('Article not found');
     }
 
-    const article = await this.findOne(id);
-    if (article.author.uid !== doctor_id) {
+    if (article.author.uid !== authorUid) {
       throw new ForbiddenException(
         'You are not allowed to delete this article',
       );

@@ -11,6 +11,12 @@ import {
 import { FavoritesService } from './favorites.service';
 import { CreateFavoriteDto } from './dto/create-favorite.dto';
 import { Auth } from 'src/decorators/auth.decorator';
+import {
+  CreateFavoriteParams,
+  FindUserFavoritesParams,
+  FindArticleFavoritesParams,
+  DeleteFavoriteParams,
+} from 'src/utils/types';
 
 @Controller('favorites')
 export class FavoritesController {
@@ -24,29 +30,38 @@ export class FavoritesController {
       throw new ForbiddenException('You are not allowed to do this');
     }
 
-    const createFavoriteDetails = {
-      ...createFavoriteDto,
+    const createFavoriteParams: CreateFavoriteParams = {
+      articleId: createFavoriteDto.articleId,
+      userId: createFavoriteDto.userId,
     };
-    return this.favoritesService.create(createFavoriteDetails);
+    return this.favoritesService.create(createFavoriteParams);
   }
 
   @Get('users/:id')
   @Auth('PATIENT', 'DOCTOR')
   findUserFavorites(@Param('id') id: string) {
-    return this.favoritesService.findUserFavorites(id);
+    const findUserFavoritesDetails: FindUserFavoritesParams = {
+      userId: id,
+    };
+    return this.favoritesService.findUserFavorites(findUserFavoritesDetails);
   }
 
   @Get('articles/:id')
   @Auth('PATIENT', 'DOCTOR')
   findArticleFavorites(@Param('id') id: string) {
-    return this.favoritesService.findArticleFavorites(+id);
+    const findArticleFavoritesDetails: FindArticleFavoritesParams = {
+      articleId: +id,
+    };
+    return this.favoritesService.findArticleFavorites(
+      findArticleFavoritesDetails,
+    );
   }
 
   @Delete('users/:userId/articles/:articleId')
   @Auth('PATIENT', 'DOCTOR')
   remove(
     @Param('userId') userId: string,
-    @Param('articleId') articleId: number,
+    @Param('articleId') articleId: string,
     @Req() req,
   ) {
     const { uid } = req.user;
@@ -54,11 +69,10 @@ export class FavoritesController {
       throw new ForbiddenException('You are not allowed to do this');
     }
 
-    const deleteFavoriteDetails = {
+    const deleteFavoriteParams: DeleteFavoriteParams = {
       articleId: +articleId,
       userId,
     };
-
-    return this.favoritesService.remove(deleteFavoriteDetails);
+    return this.favoritesService.remove(deleteFavoriteParams);
   }
 }

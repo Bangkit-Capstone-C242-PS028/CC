@@ -1,4 +1,4 @@
-// User Signup Params
+// User Types
 export type SignUpUserParams = {
   email: string;
   password: string;
@@ -7,20 +7,60 @@ export type SignUpUserParams = {
   lastName: string;
   dob: Date;
   address: string;
+  specialization?: string; // for doctors
+  workplace?: string; // for doctors
+};
+
+export type FindUserParams = {
+  uid: string;
+};
+
+export type FindAllUsersParams = {
+  role?: string;
+  page?: number;
+  limit?: number;
+};
+
+export type UpdateUserParams = {
+  uid: string;
+  firstName?: string;
+  lastName?: string;
+  address?: string;
   specialization?: string;
   workplace?: string;
+};
+
+export type DeleteUserParams = {
+  uid: string;
 };
 
 // Article Params
 export type CreateArticleParams = {
   title: string;
   content: string;
+  authorUid: string;
 };
 
 // Update Article Params
 export type UpdateArticleParams = {
+  id: number;
   title?: string;
   content?: string;
+  authorUid: string;
+};
+
+export type FindArticleParams = {
+  id: number;
+};
+
+export type FindAllArticlesParams = {
+  page?: number;
+  limit?: number;
+};
+
+export type DeleteArticleParams = {
+  id: number;
+  authorUid: string;
 };
 
 // Create Favorite Params
@@ -33,6 +73,14 @@ export type CreateFavoriteParams = {
 export type DeleteFavoriteParams = {
   articleId: number;
   userId: string;
+};
+
+export type FindUserFavoritesParams = {
+  userId: string;
+};
+
+export type FindArticleFavoritesParams = {
+  articleId: number;
 };
 
 // Create Forum Params
@@ -78,4 +126,11 @@ export type DeleteForumReplyParams = {
   replyId: number;
   userUid: string;
   userRole: string;
+};
+
+// Find Replies Params
+export type FindRepliesParams = {
+  forumId: number;
+  page?: number;
+  limit?: number;
 };

@@ -9,6 +9,7 @@ import {
   CreateForumReplyParams,
   DeleteForumParams,
   DeleteForumReplyParams,
+  FindRepliesParams,
   UpdateForumParams,
   UpdateForumReplyParams,
 } from 'src/utils/types';
@@ -25,14 +26,14 @@ export class ForumsService {
   constructor(
     @InjectRepository(Forum)
     private readonly forumRepository: Repository<Forum>,
-    @InjectRepository(Patient)
-    private readonly patientRepository: Repository<Patient>,
-    @InjectRepository(Doctor)
-    private readonly doctorRepository: Repository<Doctor>,
     @InjectRepository(ForumReply)
     private readonly forumReplyRepository: Repository<ForumReply>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Doctor)
+    private readonly doctorRepository: Repository<Doctor>,
+    @InjectRepository(Patient)
+    private readonly patientRepository: Repository<Patient>,
   ) {}
 
   async create(createForumDetails: CreateForumParams) {
@@ -140,7 +141,9 @@ export class ForumsService {
     return forum;
   }
 
-  async findReplies(forumId: number, page = 1, limit = 10) {
+  async findReplies(findRepliesDetails: FindRepliesParams) {
+    const { forumId, page = 1, limit = 10 } = findRepliesDetails;
+
     const forum = await this.forumRepository.findOne({
       where: { id: forumId },
     });
@@ -153,15 +156,15 @@ export class ForumsService {
 
     return this.forumReplyRepository.find({
       where: { forum_id: forumId },
+      relations: ['responder'],
       take: limit,
       skip,
       order: { created_at: 'ASC' },
     });
   }
 
-  async createReply(createReplyDetails: CreateForumReplyParams) {
-    const { content, forumId, responderUid, responderRole } =
-      createReplyDetails;
+  async createReply(params: CreateForumReplyParams) {
+    const { content, forumId, responderUid, responderRole } = params;
 
     const forum = await this.forumRepository.findOne({
       where: { id: forumId },
@@ -172,7 +175,6 @@ export class ForumsService {
       throw new NotFoundException('Forum not found');
     }
 
-    // Find the user
     const user = await this.userRepository.findOne({
       where: { uid: responderUid },
     });
@@ -181,7 +183,6 @@ export class ForumsService {
       throw new NotFoundException('User not found');
     }
 
-    // If doctor is replying, handle forum assignment
     if (responderRole === 'DOCTOR' && !forum.doctor) {
       const doctor = await this.doctorRepository.findOne({
         where: { uid: responderUid },
@@ -204,8 +205,8 @@ export class ForumsService {
     return this.forumReplyRepository.save(reply);
   }
 
-  async updateReply(updateReplyDetails: UpdateForumReplyParams) {
-    const { forumId, replyId, content, userUid, userRole } = updateReplyDetails;
+  async updateReply(params: UpdateForumReplyParams) {
+    const { forumId, replyId, content, userUid, userRole } = params;
 
     const reply = await this.forumReplyRepository.findOne({
       where: { id: replyId, forum_id: forumId },
@@ -216,7 +217,6 @@ export class ForumsService {
       throw new NotFoundException('Reply not found');
     }
 
-    // Check if user owns this reply
     if (reply.responder.uid !== userUid || reply.responder_role !== userRole) {
       throw new ForbiddenException('You can only update your own replies');
     }
@@ -232,8 +232,8 @@ export class ForumsService {
     });
   }
 
-  async removeReply(deleteReplyDetails: DeleteForumReplyParams) {
-    const { forumId, replyId, userUid, userRole } = deleteReplyDetails;
+  async removeReply(params: DeleteForumReplyParams) {
+    const { forumId, replyId, userUid, userRole } = params;
 
     const reply = await this.forumReplyRepository.findOne({
       where: { id: replyId, forum_id: forumId },
@@ -244,12 +244,10 @@ export class ForumsService {
       throw new NotFoundException('Reply not found');
     }
 
-    // Check if user owns this reply
     if (reply.responder.uid !== userUid || reply.responder_role !== userRole) {
       throw new ForbiddenException('You can only delete your own replies');
     }
 
-    // If this was the only doctor reply, update forum status
     if (userRole === 'DOCTOR') {
       const doctorReplies = await this.forumReplyRepository.count({
         where: {

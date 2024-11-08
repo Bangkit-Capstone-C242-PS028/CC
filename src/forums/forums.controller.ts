@@ -23,6 +23,7 @@ import {
 } from 'src/utils/types';
 import { CreateForumReplyDto } from './dto/create-forum-reply.dto';
 import { UpdateForumReplyDto } from './dto/update-forum-reply.dto';
+import { FindRepliesParams } from 'src/utils/types';
 
 @Controller('forums')
 export class ForumsController {
@@ -87,7 +88,12 @@ export class ForumsController {
     @Query('page') page?: number,
     @Query('limit') limit?: number,
   ) {
-    return this.forumsService.findReplies(+forumId, page, limit);
+    const findRepliesParams: FindRepliesParams = {
+      forumId: +forumId,
+      page,
+      limit,
+    };
+    return this.forumsService.findReplies(findRepliesParams);
   }
 
   @Post(':forumId/replies')
@@ -98,13 +104,13 @@ export class ForumsController {
     @Req() req,
   ) {
     const { uid, role } = req.user;
-    const createReplyDetails: CreateForumReplyParams = {
+    const createReplyParams: CreateForumReplyParams = {
       content: createReplyDto.content,
       forumId: +forumId,
       responderUid: uid,
       responderRole: role,
     };
-    return this.forumsService.createReply(createReplyDetails);
+    return this.forumsService.createReply(createReplyParams);
   }
 
   @Patch(':forumId/replies/:replyId')
@@ -116,14 +122,14 @@ export class ForumsController {
     @Req() req,
   ) {
     const { uid, role } = req.user;
-    const updateReplyDetails: UpdateForumReplyParams = {
+    const updateReplyParams: UpdateForumReplyParams = {
       forumId: +forumId,
       replyId: +replyId,
       content: updateReplyDto.content,
       userUid: uid,
       userRole: role,
     };
-    return this.forumsService.updateReply(updateReplyDetails);
+    return this.forumsService.updateReply(updateReplyParams);
   }
 
   @Delete(':forumId/replies/:replyId')
@@ -134,12 +140,12 @@ export class ForumsController {
     @Req() req,
   ) {
     const { uid, role } = req.user;
-    const deleteReplyDetails: DeleteForumReplyParams = {
+    const deleteReplyParams: DeleteForumReplyParams = {
       forumId: +forumId,
       replyId: +replyId,
       userUid: uid,
       userRole: role,
     };
-    return this.forumsService.removeReply(deleteReplyDetails);
+    return this.forumsService.removeReply(deleteReplyParams);
   }
 }

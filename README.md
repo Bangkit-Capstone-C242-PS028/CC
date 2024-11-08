@@ -54,18 +54,6 @@ Register a new user (patient or doctor)
 ### Articles
 
 ```http
-GET /articles?page=1&limit=10
-```
-
-Get paginated list of articles
-
-```http
-GET /articles/:id
-```
-
-Get specific article by ID
-
-```http
 POST /articles
 ```
 
@@ -79,6 +67,18 @@ Create new article (doctors only)
   "content": "string"
 }
 ```
+
+```http
+GET /articles
+```
+
+Get all articles
+
+```http
+GET /articles/:id
+```
+
+Get article by ID
 
 ```http
 PATCH /articles/:id
@@ -135,6 +135,98 @@ DELETE /favorites/users/:userId/articles/:articleId
 ```
 
 Remove article from favorites
+
+### Forums
+
+```http
+POST /forums
+```
+
+Create new forum (patients only)
+
+- Body:
+
+```json
+{
+  "title": "string",
+  "content": "string"
+}
+```
+
+```http
+GET /forums
+```
+
+Get all forums (paginated)
+
+```http
+GET /forums/:id
+```
+
+Get forum by ID with replies
+
+```http
+PATCH /forums/:id
+```
+
+Update forum (patient owner only)
+
+- Body:
+
+```json
+{
+  "title": "string",
+  "content": "string"
+}
+```
+
+```http
+DELETE /forums/:id
+```
+
+Delete forum (patient owner only)
+
+### Forum Replies
+
+```http
+POST /forums/:forumId/replies
+```
+
+Create forum reply (doctors and patients)
+
+- Body:
+
+```json
+{
+  "content": "string"
+}
+```
+
+```http
+GET /forums/:forumId/replies
+```
+
+Get forum replies (paginated)
+
+```http
+PATCH /forums/:forumId/replies/:replyId
+```
+
+Update reply (owner only)
+
+- Body:
+
+```json
+{
+  "content": "string"
+}
+```
+
+```http
+DELETE /forums/:forumId/replies/:replyId
+```
+
+Delete reply (owner only)
 
 <br>
 

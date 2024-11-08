@@ -13,6 +13,13 @@ import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Auth } from 'src/decorators/auth.decorator';
+import {
+  CreateArticleParams,
+  UpdateArticleParams,
+  FindArticleParams,
+  FindAllArticlesParams,
+  DeleteArticleParams,
+} from 'src/utils/types';
 
 @Controller('articles')
 export class ArticlesController {
@@ -22,19 +29,31 @@ export class ArticlesController {
   @Auth('DOCTOR')
   async create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
     const { uid } = req.user;
-    return this.articlesService.create(createArticleDto, uid);
+    const createArticleParams: CreateArticleParams = {
+      title: createArticleDto.title,
+      content: createArticleDto.content,
+      authorUid: uid,
+    };
+    return this.articlesService.create(createArticleParams);
   }
 
   @Get()
   @Auth('DOCTOR', 'PATIENT')
   async findAll(@Query('page') page: number, @Query('limit') limit: number) {
-    return await this.articlesService.findAll(page, limit);
+    const findAllArticlesDetails: FindAllArticlesParams = {
+      page,
+      limit,
+    };
+    return await this.articlesService.findAll(findAllArticlesDetails);
   }
 
   @Get(':id')
   @Auth('DOCTOR', 'PATIENT')
   findOne(@Param('id') id: string) {
-    return this.articlesService.findOne(+id);
+    const findArticleDetails: FindArticleParams = {
+      id: +id,
+    };
+    return this.articlesService.findOne(findArticleDetails);
   }
 
   @Patch(':id')
@@ -45,13 +64,23 @@ export class ArticlesController {
     @Request() req,
   ) {
     const { uid } = req.user;
-    return this.articlesService.update(+id, updateArticleDto, uid);
+    const updateArticleDetails: UpdateArticleParams = {
+      id: +id,
+      title: updateArticleDto.title,
+      content: updateArticleDto.content,
+      authorUid: uid,
+    };
+    return this.articlesService.update(updateArticleDetails);
   }
 
   @Delete(':id')
   @Auth('DOCTOR')
   remove(@Param('id') id: string, @Request() req) {
     const { uid } = req.user;
-    return this.articlesService.remove(+id, uid);
+    const deleteArticleDetails: DeleteArticleParams = {
+      id: +id,
+      authorUid: uid,
+    };
+    return this.articlesService.remove(deleteArticleDetails);
   }
 }
