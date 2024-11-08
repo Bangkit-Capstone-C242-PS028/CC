@@ -55,3 +55,27 @@ export type DeleteForumParams = {
   id: number;
   patientUid: string;
 };
+
+// Create Forum Reply Params
+export type CreateForumReplyParams = {
+  content: string;
+  forumId: number;
+  responderUid: string;
+  responderRole: string;
+};
+
+export type UpdateForumReplyParams = {
+  forumId: number;
+  replyId: number;
+  content: string;
+  userUid: string;
+  userRole: string;
+};
+
+// Delete Forum Reply Params
+export type DeleteForumReplyParams = {
+  forumId: number;
+  replyId: number;
+  userUid: string;
+  userRole: string;
+};

@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Forum } from './forum.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity('forum_replies')
 export class ForumReply {
@@ -19,8 +20,8 @@ export class ForumReply {
   @Column()
   responder_role: string; // 'doctor' or 'patient'
 
-  @Column()
-  responder_id: number;
+  @ManyToOne(() => User)
+  responder: User;
 
   @Column('text')
   content: string;
