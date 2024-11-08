@@ -34,3 +34,24 @@ export type DeleteFavoriteParams = {
   articleId: number;
   userId: string;
 };
+
+// Create Forum Params
+export type CreateForumParams = {
+  title: string;
+  content: string;
+  patientUid: string;
+};
+
+// Update Forum Params
+export type UpdateForumParams = {
+  id: number;
+  title?: string;
+  content?: string;
+  patientUid?: string;
+};
+
+// Delete Forum Params
+export type DeleteForumParams = {
+  id: number;
+  patientUid: string;
+};
