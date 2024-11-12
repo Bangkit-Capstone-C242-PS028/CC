@@ -25,13 +25,10 @@ export class FavoritesController {
   @Auth('PATIENT', 'DOCTOR')
   create(@Body() createFavoriteDto: CreateFavoriteDto, @Req() req) {
     const { uid } = req.user;
-    if (uid !== createFavoriteDto.userId) {
-      throw new ForbiddenException('You are not allowed to do this');
-    }
 
     const createFavoriteParams: CreateFavoriteParams = {
       articleId: createFavoriteDto.articleId,
-      userId: createFavoriteDto.userId,
+      userId: uid,
     };
     return this.favoritesService.create(createFavoriteParams);
   }
@@ -44,7 +41,11 @@ export class FavoritesController {
     page: number,
     @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
     limit: number,
+    @Req() req,
   ) {
+    if (id !== req.user.uid) {
+      throw new ForbiddenException('You can only view your own favorites');
+    }
     return this.favoritesService.findUserFavorites({ userId: id, page, limit });
   }
 
@@ -64,22 +65,15 @@ export class FavoritesController {
     });
   }
 
-  @Delete('users/:userId/articles/:articleId')
+  @Delete('articles/:articleId')
   @Auth('PATIENT', 'DOCTOR')
-  remove(
-    @Param('userId') userId: string,
-    @Param('articleId') articleId: string,
-    @Req() req,
-  ) {
+  remove(@Param('articleId') articleId: string, @Req() req) {
     const { uid } = req.user;
-    if (uid !== userId) {
-      throw new ForbiddenException('You are not allowed to do this');
-    }
 
-    const deleteFavoriteParams: DeleteFavoriteParams = {
+    const deleteFavoriteDetails: DeleteFavoriteParams = {
       articleId: +articleId,
-      userId,
+      userId: uid,
     };
-    return this.favoritesService.remove(deleteFavoriteParams);
+    return this.favoritesService.remove(deleteFavoriteDetails);
   }
 }

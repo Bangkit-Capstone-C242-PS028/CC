@@ -193,8 +193,7 @@ Body:
 
 ```json
 {
-  "articleId": "number",
-  "userId": "string"
+  "articleId": "number"
 }
 ```
 
@@ -208,6 +207,12 @@ GET /favorites/users/:id?page=1&limit=10
 
 ```http
 GET /favorites/articles/:id?page=1&limit=10
+```
+
+#### Delete Article from Favorites (DOCTOR, PATIENT)
+
+```http
+DELETE /favorites/articles/:id
 ```
 
 ### Authentication
