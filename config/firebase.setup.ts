@@ -19,14 +19,14 @@ export class FirebaseAdmin implements OnApplicationBootstrap {
         client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
         universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN,
       });
-      const serviceAccount = await JSON.parse(serviceAccountJson);
+      const serviceAccount: admin.ServiceAccount =
+        await JSON.parse(serviceAccountJson);
       app = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
       });
     }
   }
   setup() {
-    console.log(app);
     return app;
   }
 }
