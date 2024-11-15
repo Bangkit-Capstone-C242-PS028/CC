@@ -26,6 +26,7 @@ export class FirebaseAdmin implements OnApplicationBootstrap {
     }
   }
   setup() {
+    console.log(app);
     return app;
   }
 }
