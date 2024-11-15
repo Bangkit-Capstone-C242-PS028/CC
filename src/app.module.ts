@@ -30,13 +30,15 @@ import { ForumReply } from './forums/entities/forum-reply.entity';
       // port: parseInt(process.env.DB_PORT),
 
       // cloud sql
-      host: process.env.PRODUCTION
-        ? `/cloudsql/${process.env.CONNECTION_NAME}`
-        : process.env.DB_HOST,
-      extra: {
-        socketPath: process.env.PRODUCTION
+      host:
+        process.env.ENV === 'prod'
           ? `/cloudsql/${process.env.CONNECTION_NAME}`
-          : undefined,
+          : process.env.DB_HOST,
+      extra: {
+        socketPath:
+          process.env.ENV === 'prod'
+            ? `/cloudsql/${process.env.CONNECTION_NAME}`
+            : undefined,
       },
 
       username: process.env.DB_USERNAME,
