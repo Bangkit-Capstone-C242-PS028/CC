@@ -24,8 +24,21 @@ import { ForumReply } from './forums/entities/forum-reply.entity';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT),
+
+      // local mysql
+      // host: process.env.DB_HOST,
+      // port: parseInt(process.env.DB_PORT),
+
+      // cloud sql
+      host: process.env.PRODUCTION
+        ? `/cloudsql/${process.env.CONNECTION_NAME}`
+        : process.env.DB_HOST,
+      extra: {
+        socketPath: process.env.PRODUCTION
+          ? `/cloudsql/${process.env.CONNECTION_NAME}`
+          : undefined,
+      },
+
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
