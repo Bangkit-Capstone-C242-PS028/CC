@@ -15,6 +15,7 @@ import { User } from './users/entities/user.entity';
 import { ForumsModule } from './forums/forums.module';
 import { Forum } from './forums/entities/forum.entity';
 import { ForumReply } from './forums/entities/forum-reply.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -32,6 +33,8 @@ import { ForumReply } from './forums/entities/forum-reply.entity';
       entities: [User, Doctor, Patient, Article, Favorite, Forum, ForumReply],
       synchronize: true,
     }),
+
+    AuthModule,
 
     UserModule,
 
