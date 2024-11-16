@@ -32,6 +32,8 @@ export type DeleteUserParams = {
   uid: string;
 };
 
+// =========================================================================================
+
 // Article Params
 export type CreateArticleParams = {
   title: string;
@@ -56,6 +58,9 @@ export type DeleteArticleParams = {
   authorUid: string;
 };
 
+// =========================================================================================
+
+// Favorite Params
 // Create Favorite Params
 export type CreateFavoriteParams = {
   articleId: number;
@@ -75,6 +80,8 @@ export type FindUserFavoritesParams = {
 export type FindArticleFavoritesParams = {
   articleId: number;
 } & PaginationParams;
+
+// =========================================================================================
 
 // Create Forum Params
 export type CreateForumParams = {
@@ -96,6 +103,8 @@ export type DeleteForumParams = {
   id: number;
   patientUid: string;
 };
+
+// =========================================================================================
 
 // Create Forum Reply Params
 export type CreateForumReplyParams = {
@@ -126,6 +135,9 @@ export type FindRepliesParams = PaginationParams & {
   forumId: number;
 };
 
+// =========================================================================================
+
+// Pagination Params
 export type PaginationParams = {
   page?: number;
   limit?: number;
