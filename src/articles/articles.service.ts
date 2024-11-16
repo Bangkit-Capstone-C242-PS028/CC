@@ -57,7 +57,11 @@ export class ArticlesService {
     const [data, total] = await this.articleRepository.findAndCount({
       take,
       skip,
-      relations: ['author'],
+      relations: {
+        author: {
+          user: true,
+        },
+      },
       order: { created_at: 'DESC' },
     });
 
@@ -104,24 +108,18 @@ export class ArticlesService {
     }
 
     await this.articleRepository.update(id, {
-      title,
-      content,
+      ...(title && { title }),
+      ...(content && { content }),
       updated_at: new Date(),
     });
 
-    return this.articleRepository.findOne({
-      where: { id },
-      relations: { author: { user: true } },
-    });
+    return this.findOne({ id });
   }
 
   async remove(params: DeleteArticleParams) {
     const { id, authorUid } = params;
 
-    const article = await this.articleRepository.findOne({
-      where: { id },
-      relations: { author: true },
-    });
+    const article = await this.findOne({ id });
 
     if (!article) {
       throw new NotFoundException('Article not found');
@@ -133,7 +131,7 @@ export class ArticlesService {
       );
     }
 
-    await this.articleRepository.delete(id);
+    await this.articleRepository.remove(article);
     return article;
   }
 }
