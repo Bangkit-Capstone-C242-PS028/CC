@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   Req,
-  ForbiddenException,
   Query,
   DefaultValuePipe,
   ParseIntPipe,
@@ -14,7 +13,12 @@ import {
 import { FavoritesService } from './favorites.service';
 import { CreateFavoriteDto } from './dto/create-favorite.dto';
 import { Auth } from 'src/decorators/auth.decorator';
-import { CreateFavoriteParams, DeleteFavoriteParams } from 'src/utils/types';
+import {
+  CreateFavoriteParams,
+  DeleteFavoriteParams,
+  FindArticleFavoritesParams,
+  FindUserFavoritesParams,
+} from 'src/utils/types';
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from 'src/utils/pagination.helper';
 
 @Controller('favorites')
@@ -33,20 +37,23 @@ export class FavoritesController {
     return this.favoritesService.create(createFavoriteParams);
   }
 
-  @Get('users/:id')
+  @Get('my')
   @Auth('PATIENT', 'DOCTOR')
   findUserFavorites(
-    @Param('id') id: string,
     @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
     page: number,
     @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
     limit: number,
     @Req() req,
   ) {
-    if (id !== req.user.uid) {
-      throw new ForbiddenException('You can only view your own favorites');
-    }
-    return this.favoritesService.findUserFavorites({ userId: id, page, limit });
+    const { uid } = req.user;
+
+    const findUserFavoritesDetails: FindUserFavoritesParams = {
+      userId: uid,
+      page,
+      limit,
+    };
+    return this.favoritesService.findUserFavorites(findUserFavoritesDetails);
   }
 
   @Get('articles/:id')
@@ -58,20 +65,23 @@ export class FavoritesController {
     @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
     limit: number,
   ) {
-    return this.favoritesService.findArticleFavorites({
+    const findArticleFavoritesDetails: FindArticleFavoritesParams = {
       articleId: +id,
       page,
       limit,
-    });
+    };
+    return this.favoritesService.findArticleFavorites(
+      findArticleFavoritesDetails,
+    );
   }
 
-  @Delete('articles/:articleId')
+  @Delete('articles/:id')
   @Auth('PATIENT', 'DOCTOR')
-  remove(@Param('articleId') articleId: string, @Req() req) {
+  remove(@Param('id') id: string, @Req() req) {
     const { uid } = req.user;
 
     const deleteFavoriteDetails: DeleteFavoriteParams = {
-      articleId: +articleId,
+      articleId: +id,
       userId: uid,
     };
     return this.favoritesService.remove(deleteFavoriteDetails);

@@ -91,7 +91,7 @@ export class ForumsController {
 
   @Get(':forumId/replies')
   @Auth('DOCTOR', 'PATIENT')
-  getReplies(
+  findReplies(
     @Param('forumId') forumId: string,
     @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
     page: number,
