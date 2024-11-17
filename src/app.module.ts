@@ -16,6 +16,9 @@ import { ForumsModule } from './forums/forums.module';
 import { Forum } from './forums/entities/forum.entity';
 import { ForumReply } from './forums/entities/forum-reply.entity';
 import { AuthModule } from './auth/auth.module';
+import { SkinLesionsModule } from './skin-lesions/skin-lesions.module';
+import { StorageModule } from './storage/storage.module';
+import { SkinLesion } from './skin-lesions/entities/skin-lesion.entity';
 
 @Module({
   imports: [
@@ -45,7 +48,16 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Doctor, Patient, Article, Favorite, Forum, ForumReply],
+      entities: [
+        User,
+        Doctor,
+        Patient,
+        Article,
+        Favorite,
+        Forum,
+        ForumReply,
+        SkinLesion,
+      ],
       synchronize: true,
     }),
 
@@ -58,6 +70,10 @@ import { AuthModule } from './auth/auth.module';
     FavoritesModule,
 
     ForumsModule,
+
+    SkinLesionsModule,
+
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService, FirebaseAdmin],
