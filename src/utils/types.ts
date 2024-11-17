@@ -151,3 +151,45 @@ export type PaginatedResponse<T> = {
     lastPage: number;
   };
 };
+
+// =========================================================================================
+
+// Skin Lesion Types
+export type CreateSkinLesionParams = {
+  patientUid: string;
+  image: Express.Multer.File;
+};
+
+export type FindSkinLesionParams = {
+  id: string;
+  patientUid: string;
+};
+
+export type FindAllSkinLesionsParams = PaginationParams & {
+  patientUid: string;
+};
+
+export type UpdateSkinLesionParams = {
+  id: string;
+  classification: string;
+  severity: string;
+  processedImageUrl: string;
+};
+
+export type DeleteSkinLesionParams = {
+  id: string;
+  patientUid: string;
+};
+
+export type SkinLesionResponse = {
+  id: string;
+  originalImageUrl: string;
+  processedImageUrl?: string;
+  classification?: string;
+  severity?: string;
+  status: string;
+  createdAt: Date;
+  processedAt?: Date;
+};
+
+export type PaginatedSkinLesionResponse = PaginatedResponse<SkinLesionResponse>;
