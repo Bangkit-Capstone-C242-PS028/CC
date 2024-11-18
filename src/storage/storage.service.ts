@@ -38,11 +38,8 @@ export class StorageService {
     return file.publicUrl();
   }
 
-  async delete(path: string) {
-    await this.storage
-      .bucket(this.bucket)
-      .file(path)
-      .delete({ ignoreNotFound: true });
+  async delete(fileName: string) {
+    await this.storage.bucket(this.bucket).file(fileName).delete();
   }
 
   async get(path: string): Promise<StorageFile> {

@@ -149,15 +149,23 @@ export class SkinLesionsService {
     }
 
     try {
-      // Remove from database
-      await this.skinLesionRepository.remove(skinLesion);
       // Delete images from Cloud Storage
       if (skinLesion.originalImageUrl) {
-        await this.storageService.delete(skinLesion.originalImageUrl);
+        const fileName = skinLesion.originalImageUrl
+          .split('/')
+          .pop()
+          .replaceAll('%2F', '/');
+        await this.storageService.delete(fileName);
       }
       if (skinLesion.processedImageUrl) {
-        await this.storageService.delete(skinLesion.processedImageUrl);
+        const processedFileName = skinLesion.processedImageUrl
+          .split('/')
+          .pop()
+          .replaceAll('%2F', '/');
+        await this.storageService.delete(processedFileName);
       }
+      // Remove from database
+      await this.skinLesionRepository.remove(skinLesion);
       return { message: 'Skin lesion deleted successfully' };
     } catch (error) {
       throw new Error(`Failed to delete skin lesion: ${error.message}`);
