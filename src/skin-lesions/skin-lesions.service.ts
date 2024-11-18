@@ -5,8 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Storage } from '@google-cloud/storage';
-// import { PubSub } from '@google-cloud/pubsub';
 import { SkinLesion, SkinLesionStatus } from './entities/skin-lesion.entity';
 import {
   CreateSkinLesionParams,
@@ -19,18 +17,15 @@ import {
 import { getPaginationParams } from 'src/utils/pagination.helper';
 import { StorageService } from 'src/storage/storage.service';
 import { nanoid } from 'nanoid';
+import { PubsubService } from 'src/pubsub/pubsub.service';
 
 @Injectable()
 export class SkinLesionsService {
-  private storage: Storage;
-  // private pubsub: PubSub;
-  private bucket: string;
-  private topicName: string;
-
   constructor(
     @InjectRepository(SkinLesion)
     private skinLesionRepository: Repository<SkinLesion>,
     private storageService: StorageService,
+    private pubsubService: PubsubService,
   ) {}
 
   async create(params: CreateSkinLesionParams) {
@@ -38,19 +33,24 @@ export class SkinLesionsService {
     try {
       // 1. Upload to Cloud Storage
       const id = nanoid();
-      const fileId = id;
+      const fileName = `skin-lesions/${patientUid}/${id}`;
       const publicUrl = await this.storageService.save(
-        `skin-lesions/${patientUid}/${fileId}`,
+        fileName,
         image.mimetype,
         image.buffer,
-        [{ fileId }],
+        [{ id }],
       );
 
       // 2. Save to database
       const skinLesion = await this.saveSkinLesion(id, patientUid, publicUrl);
 
       // 3. Publish to Pub/Sub
-      // await this.publishToQueue(skinLesion);
+      await this.pubsubService.publish('skin-lesion-created', {
+        id: skinLesion.id,
+        patientUid: skinLesion.patientUid,
+        fileName,
+        createdAt: skinLesion.createdAt,
+      });
 
       return skinLesion;
     } catch (error) {
