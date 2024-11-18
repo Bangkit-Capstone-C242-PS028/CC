@@ -19,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
 import { SkinLesionsModule } from './skin-lesions/skin-lesions.module';
 import { StorageModule } from './storage/storage.module';
 import { SkinLesion } from './skin-lesions/entities/skin-lesion.entity';
+import { PubsubModule } from './pubsub/pubsub.module';
 
 @Module({
   imports: [
@@ -74,6 +75,8 @@ import { SkinLesion } from './skin-lesions/entities/skin-lesion.entity';
     SkinLesionsModule,
 
     StorageModule,
+
+    PubsubModule,
   ],
   controllers: [AppController],
   providers: [AppService, FirebaseAdmin],
