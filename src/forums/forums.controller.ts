@@ -27,6 +27,7 @@ import { CreateForumReplyDto } from './dto/create-forum-reply.dto';
 import { UpdateForumReplyDto } from './dto/update-forum-reply.dto';
 import { FindRepliesParams } from 'src/utils/types';
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from 'src/utils/pagination.helper';
+import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 
 @Controller('forums')
 export class ForumsController {
@@ -34,6 +35,7 @@ export class ForumsController {
 
   @Post()
   @Auth('PATIENT')
+  @ResponseMessage('Forum created successfully')
   create(@Body() createForumDto: CreateForumDto, @Req() req) {
     const { uid } = req.user;
     const createForumDetails: CreateForumParams = {
@@ -45,6 +47,7 @@ export class ForumsController {
 
   @Get()
   @Auth('DOCTOR', 'PATIENT')
+  @ResponseMessage('Forums retrieved successfully')
   findAll(
     @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
     page: number,
@@ -56,12 +59,14 @@ export class ForumsController {
 
   @Get(':id')
   @Auth('DOCTOR', 'PATIENT')
+  @ResponseMessage('Forum retrieved successfully')
   findOne(@Param('id') id: string) {
     return this.forumsService.findOne(+id);
   }
 
   @Patch(':id')
   @Auth('PATIENT')
+  @ResponseMessage('Forum updated successfully')
   update(
     @Param('id') id: string,
     @Body() updateForumDto: UpdateForumDto,
@@ -79,6 +84,7 @@ export class ForumsController {
 
   @Delete(':id')
   @Auth('PATIENT')
+  @ResponseMessage('Forum deleted successfully')
   remove(@Param('id') id: string, @Req() req) {
     const { uid } = req.user;
 
@@ -91,6 +97,7 @@ export class ForumsController {
 
   @Get(':forumId/replies')
   @Auth('DOCTOR', 'PATIENT')
+  @ResponseMessage('Forum replies retrieved successfully')
   findReplies(
     @Param('forumId') forumId: string,
     @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
@@ -108,6 +115,7 @@ export class ForumsController {
 
   @Post(':forumId/replies')
   @Auth('DOCTOR', 'PATIENT')
+  @ResponseMessage('Forum reply created successfully')
   createReply(
     @Param('forumId') forumId: string,
     @Body() createReplyDto: CreateForumReplyDto,
@@ -125,6 +133,7 @@ export class ForumsController {
 
   @Patch(':forumId/replies/:replyId')
   @Auth('DOCTOR', 'PATIENT')
+  @ResponseMessage('Forum reply updated successfully')
   updateReply(
     @Param('forumId') forumId: string,
     @Param('replyId') replyId: string,
@@ -144,6 +153,7 @@ export class ForumsController {
 
   @Delete(':forumId/replies/:replyId')
   @Auth('DOCTOR', 'PATIENT')
+  @ResponseMessage('Forum reply deleted successfully')
   removeReply(
     @Param('forumId') forumId: string,
     @Param('replyId') replyId: string,

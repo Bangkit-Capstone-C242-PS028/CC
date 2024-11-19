@@ -20,6 +20,7 @@ import {
   FindAllSkinLesionsParams,
   CreateSkinLesionParams,
 } from 'src/utils/types';
+import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 
 @Controller('skin-lesions')
 export class SkinLesionsController {
@@ -34,6 +35,7 @@ export class SkinLesionsController {
       },
     }),
   )
+  @ResponseMessage('Skin lesion uploaded successfully')
   async create(@UploadedFile() file: Express.Multer.File, @Req() req) {
     const { uid } = req.user;
     const createSkinLesionDetails: CreateSkinLesionParams = {
@@ -45,6 +47,7 @@ export class SkinLesionsController {
 
   @Get('me')
   @Auth('PATIENT')
+  @ResponseMessage('Skin lesions retrieved successfully')
   async findMyLesions(
     @Req() req,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -61,6 +64,7 @@ export class SkinLesionsController {
 
   @Get(':id')
   @Auth('PATIENT')
+  @ResponseMessage('Skin lesion retrieved successfully')
   async findOne(@Param('id') id: string, @Req() req) {
     const { uid } = req.user;
     const findSkinLesionDetails: FindSkinLesionParams = {
@@ -72,13 +76,13 @@ export class SkinLesionsController {
 
   @Delete(':id')
   @Auth('PATIENT')
+  @ResponseMessage('Skin lesion deleted successfully')
   async remove(@Param('id') id: string, @Req() req) {
     const { uid } = req.user;
     const deleteSkinLesionDetails: DeleteSkinLesionParams = {
       id,
       patientUid: uid,
     };
-    console.log(deleteSkinLesionDetails);
     return this.skinLesionsService.remove(deleteSkinLesionDetails);
   }
 }

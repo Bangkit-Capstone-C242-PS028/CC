@@ -22,6 +22,7 @@ import {
   DeleteArticleParams,
 } from 'src/utils/types';
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from 'src/utils/pagination.helper';
+import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 
 @Controller('articles')
 export class ArticlesController {
@@ -29,6 +30,7 @@ export class ArticlesController {
 
   @Post()
   @Auth('DOCTOR')
+  @ResponseMessage('Article created successfully')
   async create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
     const { uid } = req.user;
     const createArticleParams: CreateArticleParams = {
@@ -41,6 +43,7 @@ export class ArticlesController {
 
   @Get()
   @Auth('DOCTOR', 'PATIENT')
+  @ResponseMessage('Articles retrieved successfully')
   async findAll(
     @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
     page: number,
@@ -52,6 +55,7 @@ export class ArticlesController {
 
   @Get(':id')
   @Auth('DOCTOR', 'PATIENT')
+  @ResponseMessage('Article retrieved successfully')
   findOne(@Param('id') id: string) {
     const findArticleDetails: FindArticleParams = {
       id: +id,
@@ -61,6 +65,7 @@ export class ArticlesController {
 
   @Patch(':id')
   @Auth('DOCTOR')
+  @ResponseMessage('Article updated successfully')
   update(
     @Param('id') id: string,
     @Body() updateArticleDto: UpdateArticleDto,
@@ -78,6 +83,7 @@ export class ArticlesController {
 
   @Delete(':id')
   @Auth('DOCTOR')
+  @ResponseMessage('Article deleted successfully')
   remove(@Param('id') id: string, @Request() req) {
     const { uid } = req.user;
     const deleteArticleDetails: DeleteArticleParams = {

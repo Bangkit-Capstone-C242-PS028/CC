@@ -3,12 +3,14 @@ import { ValidateSignupUserPipe } from 'src/pipes/validate-signup-user.pipe';
 import { UserSignupDto } from './dto/user-signup';
 import { SignUpUserParams } from 'src/utils/types';
 import { AuthService } from './auth.service';
+import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signup')
+  @ResponseMessage('User created successfully')
   signup(@Body(ValidateSignupUserPipe) userRequest: UserSignupDto) {
     if (userRequest.password !== userRequest.confirmPassword) {
       throw new BadRequestException('Password does not match');

@@ -16,6 +16,7 @@ import {
 import { UsersService } from './users.service';
 import { Auth } from 'src/decorators/auth.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -23,6 +24,7 @@ export class UsersController {
 
   @Get('me')
   @Auth('PATIENT', 'DOCTOR')
+  @ResponseMessage('User retrieved successfully')
   findMe(@Req() req) {
     const { uid } = req.user;
     const findUserParams: FindUserParams = {
@@ -34,6 +36,7 @@ export class UsersController {
 
   @Patch('me')
   @Auth('PATIENT', 'DOCTOR')
+  @ResponseMessage('User updated successfully')
   updateMe(@Body() updateUserDto: UpdateUserDto, @Req() req) {
     const { uid, role } = req.user;
     const updateUserDetails: UpdateUserParams = {
@@ -51,6 +54,7 @@ export class UsersController {
 
   @Delete('me')
   @Auth('PATIENT', 'DOCTOR')
+  @ResponseMessage('User deleted successfully')
   removeMe(@Req() req) {
     const { uid } = req.user;
     const deleteUserParams: DeleteUserParams = {
@@ -61,6 +65,7 @@ export class UsersController {
 
   @Get()
   @Auth('DOCTOR', 'PATIENT')
+  @ResponseMessage('Users retrieved successfully')
   findAll(
     @Query('role') role: string,
     @Query('page') page?: number,

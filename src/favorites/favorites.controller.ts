@@ -20,6 +20,7 @@ import {
   FindUserFavoritesParams,
 } from 'src/utils/types';
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from 'src/utils/pagination.helper';
+import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 
 @Controller('favorites')
 export class FavoritesController {
@@ -27,6 +28,7 @@ export class FavoritesController {
 
   @Post()
   @Auth('PATIENT', 'DOCTOR')
+  @ResponseMessage('Article added to favorites successfully')
   create(@Body() createFavoriteDto: CreateFavoriteDto, @Req() req) {
     const { uid } = req.user;
 
@@ -39,6 +41,7 @@ export class FavoritesController {
 
   @Get('my')
   @Auth('PATIENT', 'DOCTOR')
+  @ResponseMessage('User favorites retrieved successfully')
   findUserFavorites(
     @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
     page: number,
@@ -58,6 +61,7 @@ export class FavoritesController {
 
   @Get('articles/:id')
   @Auth('PATIENT', 'DOCTOR')
+  @ResponseMessage('Article favorites retrieved successfully')
   findArticleFavorites(
     @Param('id') id: string,
     @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
@@ -77,6 +81,7 @@ export class FavoritesController {
 
   @Delete('articles/:id')
   @Auth('PATIENT', 'DOCTOR')
+  @ResponseMessage('Article removed from favorites successfully')
   remove(@Param('id') id: string, @Req() req) {
     const { uid } = req.user;
 
