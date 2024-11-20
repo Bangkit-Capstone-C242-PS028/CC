@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './users/users.module';
-import { FirebaseAdmin } from './firebase/firebase.setup';
+import { FirebaseAdmin } from './infrastructure/firebase/firebase.setup';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Doctor } from './users/entities/doctor.entity';
 import { Patient } from './users/entities/patient.entity';
@@ -17,9 +17,9 @@ import { Forum } from './forums/entities/forum.entity';
 import { ForumReply } from './forums/entities/forum-reply.entity';
 import { AuthModule } from './auth/auth.module';
 import { SkinLesionsModule } from './skin-lesions/skin-lesions.module';
-import { StorageModule } from './storage/storage.module';
+import { StorageModule } from './infrastructure/storage/storage.module';
 import { SkinLesion } from './skin-lesions/entities/skin-lesion.entity';
-import { PubsubModule } from './pubsub/pubsub.module';
+import { PubsubModule } from './infrastructure/pubsub/pubsub.module';
 
 @Module({
   imports: [

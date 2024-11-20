@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { FirebaseAdmin } from 'src/firebase/firebase.setup';
+import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';

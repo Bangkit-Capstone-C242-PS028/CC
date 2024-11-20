@@ -15,9 +15,9 @@ import {
   PaginatedSkinLesionResponse,
 } from 'src/utils/types';
 import { getPaginationParams } from 'src/utils/pagination.helper';
-import { StorageService } from 'src/storage/storage.service';
+import { StorageService } from 'src/infrastructure/storage/storage.service';
 import { nanoid } from 'nanoid';
-import { PubsubService } from 'src/pubsub/pubsub.service';
+import { PubsubService } from 'src/infrastructure/pubsub/pubsub.service';
 
 @Injectable()
 export class SkinLesionsService {

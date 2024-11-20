@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { FirebaseAdmin } from 'src/firebase/firebase.setup';
+import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
