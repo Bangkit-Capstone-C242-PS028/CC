@@ -32,8 +32,8 @@ export class FavoritesService {
     // Check if favorite already exists
     const existingFavorite = await this.favoriteRepository.findOne({
       where: {
-        article_id: articleId,
-        user_id: userId,
+        article: { id: articleId },
+        user: { uid: userId },
       },
     });
 
@@ -42,8 +42,8 @@ export class FavoritesService {
     }
 
     const favorite = this.favoriteRepository.create({
-      article_id: articleId,
-      user_id: userId,
+      article: { id: articleId },
+      user: { uid: userId },
     });
 
     return this.favoriteRepository.save(favorite);
