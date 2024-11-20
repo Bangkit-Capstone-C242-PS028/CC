@@ -18,16 +18,25 @@ import {
   DEFAULT_PAGE,
   getPaginationParams,
 } from 'src/utils/pagination.helper';
+import { ArticlesService } from 'src/articles/articles.service';
 
 @Injectable()
 export class FavoritesService {
   constructor(
     @InjectRepository(Favorite)
     private readonly favoriteRepository: Repository<Favorite>,
+
+    private readonly articlesService: ArticlesService,
   ) {}
 
   async create(params: CreateFavoriteParams) {
     const { articleId, userId } = params;
+
+    // check if article exists
+    const article = await this.articlesService.findOne({ id: articleId });
+    if (!article) {
+      throw new NotFoundException('Article not found');
+    }
 
     // Check if favorite already exists
     const existingFavorite = await this.favoriteRepository.findOne({

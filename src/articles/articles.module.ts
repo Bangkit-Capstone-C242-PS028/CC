@@ -10,5 +10,6 @@ import { Doctor } from 'src/users/entities/doctor.entity';
   imports: [TypeOrmModule.forFeature([Article, Doctor])],
   controllers: [ArticlesController],
   providers: [ArticlesService, FirebaseAdmin],
+  exports: [ArticlesService],
 })
 export class ArticlesModule {}

@@ -6,9 +6,13 @@ import { Favorite } from './entities/favorite.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Article } from 'src/articles/entities/article.entity';
 import { FirebaseAdmin } from 'config/firebase.setup';
+import { ArticlesModule } from 'src/articles/articles.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Favorite, User, Article])],
+  imports: [
+    ArticlesModule,
+    TypeOrmModule.forFeature([Favorite, User, Article]),
+  ],
   controllers: [FavoritesController],
   providers: [FavoritesService, FirebaseAdmin],
 })
