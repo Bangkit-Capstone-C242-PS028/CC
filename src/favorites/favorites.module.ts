@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Favorite } from './entities/favorite.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Article } from 'src/articles/entities/article.entity';
-import { FirebaseAdmin } from 'config/firebase.setup';
+import { FirebaseAdmin } from 'src/firebase/firebase.setup';
 import { ArticlesModule } from 'src/articles/articles.module';
 
 @Module({

@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SkinLesionsService } from './skin-lesions.service';
-import { Auth } from 'src/decorators/auth.decorator';
+import { Auth } from 'src/common/decorators/auth.decorator';
 import {
   FindSkinLesionParams,
   DeleteSkinLesionParams,

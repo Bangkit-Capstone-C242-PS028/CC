@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { FirebaseAdmin } from '../../config/firebase.setup';
+import { FirebaseAdmin } from '../../firebase/firebase.setup';
 import { Request } from 'express';
 
 @Injectable()

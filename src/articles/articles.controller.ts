@@ -14,7 +14,7 @@ import {
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { Auth } from 'src/decorators/auth.decorator';
+import { Auth } from 'src/common/decorators/auth.decorator';
 import {
   CreateArticleParams,
   UpdateArticleParams,

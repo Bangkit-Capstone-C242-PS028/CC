@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { CreateFavoriteDto } from './dto/create-favorite.dto';
-import { Auth } from 'src/decorators/auth.decorator';
+import { Auth } from 'src/common/decorators/auth.decorator';
 import {
   CreateFavoriteParams,
   DeleteFavoriteParams,

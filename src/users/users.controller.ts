@@ -14,7 +14,7 @@ import {
   DeleteUserParams,
 } from 'src/utils/types';
 import { UsersService } from './users.service';
-import { Auth } from 'src/decorators/auth.decorator';
+import { Auth } from 'src/common/decorators/auth.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 

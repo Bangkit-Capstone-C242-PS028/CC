@@ -5,7 +5,7 @@ import { Doctor } from 'src/users/entities/doctor.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Forum } from './entities/forum.entity';
 import { ForumReply } from './entities/forum-reply.entity';
-import { FirebaseAdmin } from 'config/firebase.setup';
+import { FirebaseAdmin } from 'src/firebase/firebase.setup';
 import { Patient } from 'src/users/entities/patient.entity';
 import { User } from 'src/users/entities/user.entity';
 

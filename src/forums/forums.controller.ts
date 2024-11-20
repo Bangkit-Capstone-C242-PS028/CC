@@ -14,7 +14,7 @@ import {
 import { ForumsService } from './forums.service';
 import { CreateForumDto } from './dto/create-forum.dto';
 import { UpdateForumDto } from './dto/update-forum.dto';
-import { Auth } from 'src/decorators/auth.decorator';
+import { Auth } from 'src/common/decorators/auth.decorator';
 import {
   CreateForumParams,
   CreateForumReplyParams,
