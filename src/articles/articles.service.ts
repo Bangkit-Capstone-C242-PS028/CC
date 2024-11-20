@@ -47,7 +47,8 @@ export class ArticlesService {
       author: doctor,
     });
 
-    return this.articleRepository.save(article);
+    await this.articleRepository.save(article);
+    return this.findOne({ id: article.id });
   }
 
   async findAll(params: PaginationParams): Promise<PaginatedResponse<Article>> {
