@@ -10,6 +10,7 @@ import {
   Req,
   Query,
   DefaultValuePipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SkinLesionsService } from './skin-lesions.service';
@@ -38,6 +39,9 @@ export class SkinLesionsController {
   @ResponseMessage('Skin lesion uploaded successfully')
   async create(@UploadedFile() file: Express.Multer.File, @Req() req) {
     const { uid } = req.user;
+    if (!file) {
+      throw new BadRequestException('Image is required');
+    }
     const createSkinLesionDetails: CreateSkinLesionParams = {
       patientUid: uid,
       image: file,
