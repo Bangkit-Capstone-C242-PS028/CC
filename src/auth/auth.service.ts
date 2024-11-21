@@ -6,7 +6,6 @@ import { SignUpUserParams } from 'src/utils/types';
 import { Doctor } from '../users/entities/doctor.entity';
 import { Patient } from '../users/entities/patient.entity';
 import { User } from '../users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
@@ -17,9 +16,6 @@ export class AuthService {
     private readonly doctorRepository: Repository<Doctor>,
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
-
-    private readonly userService: UsersService,
-
     private readonly firebaseAdmin: FirebaseAdmin,
   ) {}
 
@@ -35,7 +31,7 @@ export class AuthService {
       await app.auth().setCustomUserClaims(createdUser.uid, { role });
 
       await this.insertUser(userRequest, createdUser.uid);
-      return this.userService.findOne({ uid: createdUser.uid });
+      return;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
