@@ -105,7 +105,6 @@ export class SkinLesionsService {
       originalImageUrl: lesion.originalImageUrl,
       processedImageUrl: lesion.processedImageUrl,
       classification: lesion.classification,
-      severity: lesion.severity,
       status: lesion.status,
       createdAt: lesion.createdAt,
       processedAt: lesion.processedAt,

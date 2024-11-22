@@ -179,7 +179,6 @@ export type SkinLesionResponse = {
   originalImageUrl: string;
   processedImageUrl?: string;
   classification?: string;
-  severity?: string;
   status: string;
   createdAt: Date;
   processedAt?: Date;

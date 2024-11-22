@@ -37,9 +37,6 @@ export class SkinLesion {
   @Column({ nullable: true })
   classification: string;
 
-  @Column({ nullable: true })
-  severity: string;
-
   @CreateDateColumn()
   createdAt: Date;
 
