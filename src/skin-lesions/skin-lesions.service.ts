@@ -10,7 +10,6 @@ import {
   CreateSkinLesionParams,
   FindSkinLesionParams,
   FindAllSkinLesionsParams,
-  UpdateSkinLesionParams,
   DeleteSkinLesionParams,
   PaginatedSkinLesionResponse,
 } from 'src/utils/types';
@@ -18,6 +17,8 @@ import { getPaginationParams } from 'src/utils/pagination.helper';
 import { StorageService } from 'src/infrastructure/storage/storage.service';
 import { nanoid } from 'nanoid';
 import { PubsubService } from 'src/infrastructure/pubsub/pubsub.service';
+import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class SkinLesionsService {
@@ -26,10 +27,18 @@ export class SkinLesionsService {
     private skinLesionRepository: Repository<SkinLesion>,
     private storageService: StorageService,
     private pubsubService: PubsubService,
+    private usersService: UsersService,
   ) {}
 
   async create(params: CreateSkinLesionParams) {
     const { patientUid, image } = params;
+
+    const patient = await this.usersService.findOne({ uid: patientUid });
+
+    if (!patient) {
+      throw new NotFoundException('Patient not found');
+    }
+
     try {
       // 1. Upload to Cloud Storage
       const id = nanoid();
@@ -42,12 +51,12 @@ export class SkinLesionsService {
       );
 
       // 2. Save to database
-      const skinLesion = await this.saveSkinLesion(id, patientUid, publicUrl);
+      const skinLesion = await this.saveSkinLesion(id, patient, publicUrl);
 
       // 3. Publish to Pub/Sub
       await this.pubsubService.publish('skin-lesion-created', {
         id: skinLesion.id,
-        patientUid: skinLesion.patientUid,
+        patientUid: skinLesion.patient.uid,
         fileName,
         createdAt: skinLesion.createdAt,
       });
@@ -65,7 +74,8 @@ export class SkinLesionsService {
   async findOne(params: FindSkinLesionParams) {
     const { id, patientUid } = params;
     const skinLesion = await this.skinLesionRepository.findOne({
-      where: { id, patientUid },
+      where: { id, patient: { uid: patientUid } },
+      relations: { patient: true },
     });
 
     if (!skinLesion) {
@@ -82,14 +92,16 @@ export class SkinLesionsService {
     const { skip, take } = getPaginationParams(page, limit);
 
     const [skinLesions, total] = await this.skinLesionRepository.findAndCount({
-      where: { patientUid },
+      where: { patient: { uid: patientUid } },
       order: { createdAt: 'DESC' },
+      relations: { patient: true },
       take,
       skip,
     });
 
     const data = skinLesions.map((lesion) => ({
       id: lesion.id,
+      patientUid: lesion.patient.uid,
       originalImageUrl: lesion.originalImageUrl,
       processedImageUrl: lesion.processedImageUrl,
       classification: lesion.classification,
@@ -109,40 +121,18 @@ export class SkinLesionsService {
     };
   }
 
-  async updateClassification(params: UpdateSkinLesionParams) {
-    const { id, classification, severity, processedImageUrl } = params;
-    const skinLesion = await this.skinLesionRepository.findOne({
-      where: { id },
-    });
-
-    if (!skinLesion) {
-      throw new NotFoundException('Skin lesion not found');
-    }
-
-    try {
-      skinLesion.classification = classification;
-      skinLesion.severity = severity;
-      skinLesion.processedImageUrl = processedImageUrl;
-      skinLesion.status = SkinLesionStatus.COMPLETED;
-      skinLesion.processedAt = new Date();
-
-      return await this.skinLesionRepository.save(skinLesion);
-    } catch (error) {
-      throw new Error(`Failed to update classification: ${error.message}`);
-    }
-  }
-
   async remove(params: DeleteSkinLesionParams) {
     const { id, patientUid } = params;
     const skinLesion = await this.skinLesionRepository.findOne({
-      where: { id, patientUid },
+      relations: { patient: true },
+      where: { id, patient: { uid: patientUid } },
     });
 
     if (!skinLesion) {
       throw new NotFoundException('Skin lesion not found');
     }
 
-    if (patientUid !== skinLesion.patientUid) {
+    if (patientUid !== skinLesion.patient.uid) {
       throw new ForbiddenException(
         'You are not authorized to delete this skin lesion',
       );
@@ -174,12 +164,12 @@ export class SkinLesionsService {
 
   private async saveSkinLesion(
     id: string,
-    patientUid: string,
+    patient: User,
     imageUrl: string,
   ): Promise<SkinLesion> {
     const skinLesion = this.skinLesionRepository.create({
       id,
-      patientUid,
+      patient,
       originalImageUrl: imageUrl,
       status: SkinLesionStatus.PENDING,
     });

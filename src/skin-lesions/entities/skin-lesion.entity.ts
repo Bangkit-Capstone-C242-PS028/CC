@@ -22,9 +22,6 @@ export class SkinLesion {
   patient: Patient;
 
   @Column()
-  patientUid: string;
-
-  @Column()
   originalImageUrl: string;
 
   @Column({ nullable: true })

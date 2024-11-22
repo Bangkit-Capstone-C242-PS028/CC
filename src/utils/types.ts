@@ -169,13 +169,6 @@ export type FindAllSkinLesionsParams = PaginationParams & {
   patientUid: string;
 };
 
-export type UpdateSkinLesionParams = {
-  id: string;
-  classification: string;
-  severity: string;
-  processedImageUrl: string;
-};
-
 export type DeleteSkinLesionParams = {
   id: string;
   patientUid: string;
