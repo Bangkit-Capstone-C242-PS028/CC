@@ -11,5 +11,6 @@ import { User } from './entities/user.entity';
   imports: [TypeOrmModule.forFeature([Doctor, Patient, User])],
   controllers: [UsersController],
   providers: [UsersService, FirebaseAdmin],
+  exports: [UsersService],
 })
 export class UserModule {}
