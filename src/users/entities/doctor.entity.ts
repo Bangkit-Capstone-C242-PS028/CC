@@ -1,4 +1,6 @@
 import { Article } from 'src/articles/entities/article.entity';
+import { Consultation } from 'src/consultations/entities/consultation.entity';
+
 import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import { User } from './user.entity';
 
@@ -18,4 +20,7 @@ export class Doctor {
 
   @OneToMany(() => Article, (article) => article.author)
   articles: Article[];
+
+  @OneToMany(() => Consultation, (consultation) => consultation.doctor)
+  consultations: Consultation[];
 }
