@@ -31,7 +31,7 @@ export class FavoritesController {
     const { uid } = req.user;
 
     const createFavoriteParams: CreateFavoriteParams = {
-      articleId: +id,
+      articleId: id,
       userId: uid,
     };
     return this.favoritesService.create(createFavoriteParams);
@@ -48,7 +48,7 @@ export class FavoritesController {
     limit: number,
   ) {
     const findArticleFavoritesDetails: FindArticleFavoritesParams = {
-      articleId: +id,
+      articleId: id,
       page,
       limit,
     };
@@ -64,7 +64,7 @@ export class FavoritesController {
     const { uid } = req.user;
 
     const deleteFavoriteDetails: DeleteFavoriteParams = {
-      articleId: +id,
+      articleId: id,
       userId: uid,
     };
     return this.favoritesService.remove(deleteFavoriteDetails);

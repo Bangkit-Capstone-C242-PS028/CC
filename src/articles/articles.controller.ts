@@ -58,7 +58,7 @@ export class ArticlesController {
   @ResponseMessage('Article retrieved successfully')
   findOne(@Param('id') id: string) {
     const findArticleDetails: FindArticleParams = {
-      id: +id,
+      id: id,
     };
     return this.articlesService.findOne(findArticleDetails);
   }
@@ -73,7 +73,7 @@ export class ArticlesController {
   ) {
     const { uid } = req.user;
     const updateArticleDetails: UpdateArticleParams = {
-      id: +id,
+      id: id,
       title: updateArticleDto.title,
       content: updateArticleDto.content,
       authorUid: uid,
@@ -87,7 +87,7 @@ export class ArticlesController {
   remove(@Param('id') id: string, @Request() req) {
     const { uid } = req.user;
     const deleteArticleDetails: DeleteArticleParams = {
-      id: +id,
+      id: id,
       authorUid: uid,
     };
     return this.articlesService.remove(deleteArticleDetails);

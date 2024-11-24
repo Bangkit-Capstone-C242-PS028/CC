@@ -1,17 +1,24 @@
 import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { Doctor } from 'src/users/entities/doctor.entity';
 import {
+  BeforeInsert,
   Column,
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
+import { nanoid } from 'nanoid';
 
 @Entity({ name: 'articles' })
 export class Article {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  id: string;
+
+  @BeforeInsert()
+  generateId() {
+    this.id = nanoid();
+  }
 
   @Column()
   title: string;

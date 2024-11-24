@@ -43,18 +43,18 @@ export type CreateArticleParams = {
 
 // Update Article Params
 export type UpdateArticleParams = {
-  id: number;
+  id: string;
   title?: string;
   content?: string;
   authorUid: string;
 };
 
 export type FindArticleParams = {
-  id: number;
+  id: string;
 };
 
 export type DeleteArticleParams = {
-  id: number;
+  id: string;
   authorUid: string;
 };
 
@@ -63,13 +63,13 @@ export type DeleteArticleParams = {
 // Favorite Params
 // Create Favorite Params
 export type CreateFavoriteParams = {
-  articleId: number;
+  articleId: string;
   userId: string;
 };
 
 // Delete Favorite Params
 export type DeleteFavoriteParams = {
-  articleId: number;
+  articleId: string;
   userId: string;
 };
 
@@ -78,7 +78,7 @@ export type FindUserFavoritesParams = {
 } & PaginationParams;
 
 export type FindArticleFavoritesParams = {
-  articleId: number;
+  articleId: string;
 } & PaginationParams;
 
 // =========================================================================================
