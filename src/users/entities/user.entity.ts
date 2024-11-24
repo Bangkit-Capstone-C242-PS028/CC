@@ -50,6 +50,9 @@ export class User {
   @JoinColumn()
   patient: Patient;
 
-  @OneToMany(() => Favorite, (favorite) => favorite.user)
+  @OneToMany(() => Favorite, (favorite) => favorite.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   favorites: Favorite[];
 }

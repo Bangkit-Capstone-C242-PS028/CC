@@ -9,7 +9,10 @@ export class Doctor {
   @PrimaryColumn()
   uid: string;
 
-  @OneToOne(() => User, (user) => user.doctor)
+  @OneToOne(() => User, (user) => user.doctor, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @Column()
@@ -18,9 +21,15 @@ export class Doctor {
   @Column()
   workplace: string;
 
-  @OneToMany(() => Article, (article) => article.author)
+  @OneToMany(() => Article, (article) => article.author, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   articles: Article[];
 
-  @OneToMany(() => Consultation, (consultation) => consultation.doctor)
+  @OneToMany(() => Consultation, (consultation) => consultation.doctor, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   consultations: Consultation[];
 }

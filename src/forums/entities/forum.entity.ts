@@ -44,6 +44,10 @@ export class Forum {
   @ManyToOne(() => Doctor, { nullable: true })
   doctor: Doctor;
 
-  @OneToMany(() => ForumReply, (reply) => reply.forum, { nullable: true })
+  @OneToMany(() => ForumReply, (reply) => reply.forum, {
+    nullable: true,
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   replies: ForumReply[];
 }

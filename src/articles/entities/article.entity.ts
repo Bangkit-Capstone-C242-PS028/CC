@@ -35,6 +35,9 @@ export class Article {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
 
-  @OneToMany(() => Favorite, (favorite) => favorite.article)
+  @OneToMany(() => Favorite, (favorite) => favorite.article, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   favorites: Favorite[];
 }
