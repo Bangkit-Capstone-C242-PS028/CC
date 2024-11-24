@@ -155,6 +155,7 @@ export class SkinLesionsService {
     }
 
     await this.skinLesionRepository.delete({ id: skinLesion.id });
+    return { skinLesionId: skinLesion.id };
   }
 
   private async saveSkinLesion(

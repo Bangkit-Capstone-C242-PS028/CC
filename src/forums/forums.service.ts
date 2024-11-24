@@ -60,6 +60,7 @@ export class ForumsService {
     });
 
     await this.forumRepository.save(forum);
+    return { forumId: forum.id };
   }
 
   async findAll(params: PaginationParams): Promise<PaginatedResponse<Forum>> {
@@ -247,6 +248,7 @@ export class ForumsService {
     });
 
     await this.forumReplyRepository.save(reply);
+    return { replyId: reply.id };
   }
 
   async updateReply(params: UpdateForumReplyParams) {

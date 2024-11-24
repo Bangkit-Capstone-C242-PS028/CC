@@ -56,6 +56,7 @@ export class FavoritesService {
     });
 
     await this.favoriteRepository.save(favorite);
+    return { favoriteId: favorite.id };
   }
 
   async findUserFavorites(

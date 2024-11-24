@@ -51,6 +51,7 @@ export class ArticlesService {
     });
 
     await this.articleRepository.save(article);
+    return { articleId: article.id };
   }
 
   async findAll(params: PaginationParams): Promise<PaginatedResponse<Article>> {
