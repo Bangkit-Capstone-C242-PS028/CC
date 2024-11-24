@@ -63,6 +63,7 @@ export class SkinLesionsService {
         fileName,
         createdAt: skinLesion.createdAt,
       });
+      return { skinLesionId: skinLesion.id };
     } catch (error) {
       // If something fails, cleanup any uploaded files
       if (error.publicUrl) {
