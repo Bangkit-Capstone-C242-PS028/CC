@@ -15,13 +15,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let errorMessage = 'Internal server error';
+    let message = 'Internal server error';
+    let error: string | undefined;
 
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
-      errorMessage =
+      message = 'An error occurred';
+      error =
         typeof exceptionResponse === 'string'
           ? exceptionResponse
           : (exceptionResponse as any).message || exception.message;
@@ -29,7 +31,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const errorResponse: ApiResponse<null> = {
       statusCode: status,
-      error: errorMessage,
+      message,
+      error,
     };
 
     response.status(status).json(errorResponse);
