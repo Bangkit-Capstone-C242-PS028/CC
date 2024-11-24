@@ -20,6 +20,9 @@ import { SkinLesionsModule } from './skin-lesions/skin-lesions.module';
 import { StorageModule } from './infrastructure/storage/storage.module';
 import { SkinLesion } from './skin-lesions/entities/skin-lesion.entity';
 import { PubsubModule } from './infrastructure/pubsub/pubsub.module';
+import { Consultation } from './consultations/entities/consultation.entity';
+import { ConsultationMessage } from './consultations/entities/consultation-message.entity';
+import { ConsultationsModule } from './consultations/consultations.module';
 
 @Module({
   imports: [
@@ -58,6 +61,8 @@ import { PubsubModule } from './infrastructure/pubsub/pubsub.module';
         Forum,
         ForumReply,
         SkinLesion,
+        Consultation,
+        ConsultationMessage,
       ],
       synchronize: true,
     }),
@@ -77,6 +82,8 @@ import { PubsubModule } from './infrastructure/pubsub/pubsub.module';
     StorageModule,
 
     PubsubModule,
+
+    ConsultationsModule,
   ],
   controllers: [AppController],
   providers: [AppService, FirebaseAdmin],

@@ -55,7 +55,8 @@ export class FavoritesService {
       user: { uid: userId },
     });
 
-    return this.favoriteRepository.save(favorite);
+    await this.favoriteRepository.save(favorite);
+    return;
   }
 
   async findUserFavorites(
@@ -119,6 +120,7 @@ export class FavoritesService {
       throw new NotFoundException('Favorite not found');
     }
 
-    return this.favoriteRepository.remove(favorite);
+    await this.favoriteRepository.remove(favorite);
+    return;
   }
 }
