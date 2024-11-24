@@ -24,9 +24,9 @@ export class Favorite {
   @CreateDateColumn()
   created_at: Date;
 
-  @ManyToOne(() => Article)
+  @ManyToOne(() => Article, { onDelete: 'CASCADE' })
   article: Article;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 }

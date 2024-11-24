@@ -49,9 +49,12 @@ export class SkinLesionsService {
         image.buffer,
         [{ id }],
       );
-
       // 2. Save to database
-      const skinLesion = await this.saveSkinLesion(id, patient, publicUrl);
+      const skinLesion = await this.saveSkinLesion(
+        id,
+        patient,
+        publicUrl.replaceAll('%2F', '/'),
+      );
 
       // 3. Publish to Pub/Sub
       await this.pubsubService.publish('skin-lesion-created', {
@@ -134,28 +137,24 @@ export class SkinLesionsService {
         'You are not authorized to delete this skin lesion',
       );
     }
-
-    try {
-      // Delete images from Cloud Storage
-      if (skinLesion.originalImageUrl) {
-        const fileName = skinLesion.originalImageUrl
-          .split('/')
-          .pop()
-          .replaceAll('%2F', '/');
+    if (skinLesion.originalImageUrl) {
+      const fileName = skinLesion.originalImageUrl
+        .split('storage.googleapis.com/dermascan-skin-lesions/')
+        .pop();
+      if (fileName) {
         await this.storageService.delete(fileName);
       }
-      if (skinLesion.processedImageUrl) {
-        const processedFileName = skinLesion.processedImageUrl
-          .split('/')
-          .pop()
-          .replaceAll('%2F', '/');
+    }
+    if (skinLesion.processedImageUrl) {
+      const processedFileName = skinLesion.processedImageUrl
+        .split('storage.googleapis.com/dermascan-skin-lesions/')
+        .pop();
+      if (processedFileName) {
         await this.storageService.delete(processedFileName);
       }
-      // Remove from database
-      await this.skinLesionRepository.remove(skinLesion);
-    } catch (error) {
-      throw new Error(`Failed to delete skin lesion: ${error.message}`);
     }
+
+    await this.skinLesionRepository.delete({ id: skinLesion.id });
   }
 
   private async saveSkinLesion(

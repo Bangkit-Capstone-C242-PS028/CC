@@ -24,7 +24,7 @@ export class ForumReply {
   @Column()
   responder_role: string; // 'doctor' or 'patient'
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   responder: User;
 
   @Column('text')
@@ -36,6 +36,6 @@ export class ForumReply {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Forum, (forum) => forum.replies)
+  @ManyToOne(() => Forum, (forum) => forum.replies, { onDelete: 'CASCADE' })
   forum: Forum;
 }

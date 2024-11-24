@@ -110,6 +110,13 @@ export class ForumsService {
     return forum;
   }
 
+  async findMyForums(patientUid: string) {
+    const forums = await this.forumRepository.find({
+      where: { patient: { uid: patientUid } },
+    });
+    return forums;
+  }
+
   async update(updateForumDetails: UpdateForumParams) {
     const { id, title, content, patientUid } = updateForumDetails;
 
@@ -159,7 +166,14 @@ export class ForumsService {
       throw new ForbiddenException('You can only delete open forums');
     }
 
-    await this.forumRepository.delete(id);
+    try {
+      if (forum.replies?.length > 0) {
+        await this.forumReplyRepository.remove(forum.replies);
+      }
+      await this.forumRepository.delete(id);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findReplies(

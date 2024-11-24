@@ -26,7 +26,7 @@ export class Article {
   @Column()
   content: string;
 
-  @ManyToOne(() => Doctor, (doctor) => doctor.articles)
+  @ManyToOne(() => Doctor, (doctor) => doctor.articles, { onDelete: 'CASCADE' })
   author: Doctor;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

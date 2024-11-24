@@ -18,7 +18,9 @@ export class SkinLesion {
   @PrimaryColumn()
   id: string;
 
-  @ManyToOne(() => Patient)
+  @ManyToOne(() => Patient, (patient) => patient.skinLesions, {
+    onDelete: 'CASCADE',
+  })
   patient: Patient;
 
   @Column()

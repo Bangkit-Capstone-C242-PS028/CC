@@ -9,10 +9,7 @@ export class Doctor {
   @PrimaryColumn()
   uid: string;
 
-  @OneToOne(() => User, (user) => user.doctor, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
+  @OneToOne(() => User, (user) => user.doctor)
   user: User;
 
   @Column()

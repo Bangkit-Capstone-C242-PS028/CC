@@ -7,11 +7,12 @@ export class ConsultationMessage {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Consultation, (consultation) => consultation.messages)
+  @ManyToOne(() => Consultation, (consultation) => consultation.messages, {
+    onDelete: 'CASCADE',
+  })
   consultation: Consultation;
-  
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   sender: User;
 
   @Column()

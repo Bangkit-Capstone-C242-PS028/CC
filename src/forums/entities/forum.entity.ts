@@ -38,14 +38,13 @@ export class Forum {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Patient)
+  @ManyToOne(() => Patient, { onDelete: 'CASCADE' })
   patient: Patient;
 
-  @ManyToOne(() => Doctor, { nullable: true })
+  @ManyToOne(() => Doctor, { onDelete: 'CASCADE' })
   doctor: Doctor;
 
   @OneToMany(() => ForumReply, (reply) => reply.forum, {
-    nullable: true,
     cascade: true,
     onDelete: 'CASCADE',
   })

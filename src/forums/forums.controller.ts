@@ -57,6 +57,14 @@ export class ForumsController {
     return this.forumsService.findAll({ page, limit });
   }
 
+  @Get('my')
+  @Auth('PATIENT')
+  @ResponseMessage('My forums retrieved successfully')
+  findMyForums(@Req() req) {
+    const { uid } = req.user;
+    return this.forumsService.findMyForums(uid);
+  }
+
   @Get(':id')
   @Auth('DOCTOR', 'PATIENT')
   @ResponseMessage('Forum retrieved successfully')
