@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Param,
   Delete,
   Req,
@@ -11,7 +10,6 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { CreateFavoriteDto } from './dto/create-favorite.dto';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import {
   CreateFavoriteParams,
@@ -22,44 +20,24 @@ import {
 import { DEFAULT_LIMIT, DEFAULT_PAGE } from 'src/utils/pagination.helper';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 
-@Controller('favorites')
+@Controller('articles')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
-  @Post()
+  @Post(':id/favorites')
   @Auth('PATIENT', 'DOCTOR')
   @ResponseMessage('Article added to favorites successfully')
-  create(@Body() createFavoriteDto: CreateFavoriteDto, @Req() req) {
+  create(@Param('id') id: string, @Req() req) {
     const { uid } = req.user;
 
     const createFavoriteParams: CreateFavoriteParams = {
-      articleId: createFavoriteDto.articleId,
+      articleId: +id,
       userId: uid,
     };
     return this.favoritesService.create(createFavoriteParams);
   }
 
-  @Get('my')
-  @Auth('PATIENT', 'DOCTOR')
-  @ResponseMessage('User favorites retrieved successfully')
-  findUserFavorites(
-    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
-    page: number,
-    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
-    limit: number,
-    @Req() req,
-  ) {
-    const { uid } = req.user;
-
-    const findUserFavoritesDetails: FindUserFavoritesParams = {
-      userId: uid,
-      page,
-      limit,
-    };
-    return this.favoritesService.findUserFavorites(findUserFavoritesDetails);
-  }
-
-  @Get('articles/:id')
+  @Get(':id/favorites')
   @Auth('PATIENT', 'DOCTOR')
   @ResponseMessage('Article favorites retrieved successfully')
   findArticleFavorites(
@@ -79,7 +57,7 @@ export class FavoritesController {
     );
   }
 
-  @Delete('articles/:id')
+  @Delete(':id/favorites')
   @Auth('PATIENT', 'DOCTOR')
   @ResponseMessage('Article removed from favorites successfully')
   remove(@Param('id') id: string, @Req() req) {
@@ -90,5 +68,30 @@ export class FavoritesController {
       userId: uid,
     };
     return this.favoritesService.remove(deleteFavoriteDetails);
+  }
+}
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly favoritesService: FavoritesService) {}
+
+  @Get('my/favorites')
+  @Auth('PATIENT', 'DOCTOR')
+  @ResponseMessage('User favorites retrieved successfully')
+  findUserFavorites(
+    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
+    page: number,
+    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
+    limit: number,
+    @Req() req,
+  ) {
+    const { uid } = req.user;
+
+    const findUserFavoritesDetails: FindUserFavoritesParams = {
+      userId: uid,
+      page,
+      limit,
+    };
+    return this.favoritesService.findUserFavorites(findUserFavoritesDetails);
   }
 }
