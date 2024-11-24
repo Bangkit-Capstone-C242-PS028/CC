@@ -90,7 +90,7 @@ export class ForumsService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const forum = await this.forumRepository.findOne({
       where: { id },
       relations: {
@@ -178,7 +178,7 @@ export class ForumsService {
     }
 
     const [data, total] = await this.forumReplyRepository.findAndCount({
-      where: { forum_id: forumId },
+      where: { forum: { id: forumId } },
       relations: ['responder'],
       take,
       skip,
@@ -228,7 +228,6 @@ export class ForumsService {
 
     const reply = this.forumReplyRepository.create({
       content,
-      forum_id: forumId,
       responder_role: responderRole,
       responder: user,
       forum,
@@ -241,7 +240,7 @@ export class ForumsService {
     const { forumId, replyId, content, userUid, userRole } = params;
 
     const reply = await this.forumReplyRepository.findOne({
-      where: { id: replyId, forum_id: forumId },
+      where: { id: replyId, forum: { id: forumId } },
       relations: ['responder'],
     });
 
@@ -268,7 +267,7 @@ export class ForumsService {
     const { forumId, replyId, userUid, userRole } = params;
 
     const reply = await this.forumReplyRepository.findOne({
-      where: { id: replyId, forum_id: forumId },
+      where: { id: replyId, forum: { id: forumId } },
       relations: ['responder', 'forum'],
     });
 
@@ -283,7 +282,7 @@ export class ForumsService {
     if (userRole === 'DOCTOR') {
       const doctorReplies = await this.forumReplyRepository.count({
         where: {
-          forum_id: forumId,
+          forum: { id: forumId },
           responder_role: 'DOCTOR',
           id: Not(replyId),
         },
