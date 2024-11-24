@@ -49,7 +49,7 @@ export class SkinLesionsController {
     return this.skinLesionsService.create(createSkinLesionDetails);
   }
 
-  @Get('me')
+  @Get('my')
   @Auth('PATIENT')
   @ResponseMessage('Skin lesions retrieved successfully')
   async findMyLesions(
