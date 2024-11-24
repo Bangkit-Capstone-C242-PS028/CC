@@ -71,11 +71,11 @@ export class FavoritesController {
   }
 }
 
-@Controller('users')
-export class UsersController {
+@Controller('favorites')
+export class UsersFavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
-  @Get('my/favorites')
+  @Get('my')
   @Auth('PATIENT', 'DOCTOR')
   @ResponseMessage('User favorites retrieved successfully')
   findUserFavorites(
