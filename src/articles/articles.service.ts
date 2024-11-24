@@ -48,7 +48,6 @@ export class ArticlesService {
     });
 
     await this.articleRepository.save(article);
-    return this.findOne({ id: article.id });
   }
 
   async findAll(params: PaginationParams): Promise<PaginatedResponse<Article>> {
@@ -133,6 +132,5 @@ export class ArticlesService {
     }
 
     await this.articleRepository.remove(article);
-    return article;
   }
 }

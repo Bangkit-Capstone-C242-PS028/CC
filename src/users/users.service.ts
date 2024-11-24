@@ -96,11 +96,7 @@ export class UsersService {
 
   async remove(params: DeleteUserParams) {
     const { uid } = params;
-    const user = await this.findOne({ uid });
-
     await this.firebaseAdmin.setup().auth().deleteUser(uid);
-    await this.userRepository.remove(user);
-
-    return user;
+    await this.userRepository.delete(uid);
   }
 }

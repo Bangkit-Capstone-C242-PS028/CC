@@ -56,7 +56,6 @@ export class FavoritesService {
     });
 
     await this.favoriteRepository.save(favorite);
-    return;
   }
 
   async findUserFavorites(
@@ -121,6 +120,5 @@ export class FavoritesService {
     }
 
     await this.favoriteRepository.remove(favorite);
-    return;
   }
 }

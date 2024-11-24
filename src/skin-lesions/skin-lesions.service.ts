@@ -60,8 +60,6 @@ export class SkinLesionsService {
         fileName,
         createdAt: skinLesion.createdAt,
       });
-
-      return skinLesion;
     } catch (error) {
       // If something fails, cleanup any uploaded files
       if (error.publicUrl) {
@@ -155,7 +153,6 @@ export class SkinLesionsService {
       }
       // Remove from database
       await this.skinLesionRepository.remove(skinLesion);
-      return { message: 'Skin lesion deleted successfully' };
     } catch (error) {
       throw new Error(`Failed to delete skin lesion: ${error.message}`);
     }

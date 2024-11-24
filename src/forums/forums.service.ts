@@ -59,7 +59,7 @@ export class ForumsService {
       patient,
     });
 
-    return this.forumRepository.save(forum);
+    await this.forumRepository.save(forum);
   }
 
   async findAll(params: PaginationParams): Promise<PaginatedResponse<Forum>> {
@@ -160,7 +160,6 @@ export class ForumsService {
     }
 
     await this.forumRepository.delete(id);
-    return forum;
   }
 
   async findReplies(
@@ -233,7 +232,7 @@ export class ForumsService {
       forum,
     });
 
-    return this.forumReplyRepository.save(reply);
+    await this.forumReplyRepository.save(reply);
   }
 
   async updateReply(params: UpdateForumReplyParams) {
@@ -297,6 +296,6 @@ export class ForumsService {
     }
 
     await this.forumReplyRepository.remove(reply);
-    return reply;
+    return;
   }
 }
