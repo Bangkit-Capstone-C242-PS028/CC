@@ -51,4 +51,23 @@ export class ConsultationsController {
   getMessages(@Param('id') id: string, @Request() req) {
     return this.consultationsService.getConsultationMessages(req.user.uid, id);
   }
+
+  @Get('pending')
+  @Auth('DOCTOR')
+  async getPendingConsultations(@Request() req) {
+    return this.consultationsService.getPendingConsultations(req.user.uid);
+  }
+
+  @Get(':id/status')
+  @Auth('DOCTOR', 'PATIENT')
+  async getConsultationStatus(@Param('id') id: string, @Request() req) {
+    return this.consultationsService.getConsultationStatus(req.user.uid, id);
+  }
+
+  @Get('all')
+  @Auth('DOCTOR')
+  async getAllConsultations(@Request() req) {
+    return this.consultationsService.getAllConsultations(req.user.uid);
+  }
 }
+

@@ -57,7 +57,7 @@ export class ConsultationsService {
     const savedConsultation =
       await this.consultationsRepository.save(consultation);
 
-    return savedConsultation.id; 
+    return savedConsultation.id;
   }
 
   async acceptConsultation(doctorUid: string, consultationId: string) {
@@ -163,5 +163,41 @@ export class ConsultationsService {
     }
 
     return consultation.messages;
+  }
+  async getPendingConsultations(doctorUid: string) {
+    return this.consultationsRepository.find({
+      where: {
+        doctor: { uid: doctorUid },
+        status: ConsultationStatus.PENDING,
+      },
+      relations: ['patient'],
+    });
+  }
+
+  async getConsultationStatus(userUid: string, consultationId: string) {
+    const consultation = await this.consultationsRepository.findOne({
+      where: { id: consultationId },
+      relations: ['doctor', 'patient'],
+    });
+
+    if (!consultation) {
+      throw new NotFoundException('Consultation not found');
+    }
+
+    if (
+      consultation.doctor.uid !== userUid &&
+      consultation.patient.uid !== userUid
+    ) {
+      throw new BadRequestException('Not authorized to view this consultation');
+    }
+
+    return consultation;
+  }
+
+  async getAllConsultations(doctorUid: string) {
+    return this.consultationsRepository.find({
+      where: { doctor: { uid: doctorUid } },
+      relations: ['patient'],
+    });
   }
 }
