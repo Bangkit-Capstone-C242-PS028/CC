@@ -21,10 +21,14 @@ export class Consultation {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Doctor, (doctor) => doctor.consultations)
+  @ManyToOne(() => Doctor, (doctor) => doctor.consultations, {
+    onDelete: 'CASCADE',
+  })
   doctor: Doctor;
 
-  @ManyToOne(() => Patient, (patient) => patient.consultations)
+  @ManyToOne(() => Patient, (patient) => patient.consultations, {
+    onDelete: 'CASCADE',
+  })
   patient: Patient;
 
   @Column({
@@ -43,7 +47,9 @@ export class Consultation {
   @Column({ nullable: true })
   completedAt: Date;
 
-  @OneToMany(() => ConsultationMessage, (message) => message.consultation)
+  @OneToMany(() => ConsultationMessage, (message) => message.consultation, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   messages: ConsultationMessage[];
 }
-

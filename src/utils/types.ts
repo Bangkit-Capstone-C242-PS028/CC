@@ -43,18 +43,18 @@ export type CreateArticleParams = {
 
 // Update Article Params
 export type UpdateArticleParams = {
-  id: number;
+  id: string;
   title?: string;
   content?: string;
   authorUid: string;
 };
 
 export type FindArticleParams = {
-  id: number;
+  id: string;
 };
 
 export type DeleteArticleParams = {
-  id: number;
+  id: string;
   authorUid: string;
 };
 
@@ -63,13 +63,13 @@ export type DeleteArticleParams = {
 // Favorite Params
 // Create Favorite Params
 export type CreateFavoriteParams = {
-  articleId: number;
+  articleId: string;
   userId: string;
 };
 
 // Delete Favorite Params
 export type DeleteFavoriteParams = {
-  articleId: number;
+  articleId: string;
   userId: string;
 };
 
@@ -78,7 +78,7 @@ export type FindUserFavoritesParams = {
 } & PaginationParams;
 
 export type FindArticleFavoritesParams = {
-  articleId: number;
+  articleId: string;
 } & PaginationParams;
 
 // =========================================================================================
@@ -92,7 +92,7 @@ export type CreateForumParams = {
 
 // Update Forum Params
 export type UpdateForumParams = {
-  id: number;
+  id: string;
   title?: string;
   content?: string;
   patientUid?: string;
@@ -100,7 +100,7 @@ export type UpdateForumParams = {
 
 // Delete Forum Params
 export type DeleteForumParams = {
-  id: number;
+  id: string;
   patientUid: string;
 };
 
@@ -109,14 +109,14 @@ export type DeleteForumParams = {
 // Create Forum Reply Params
 export type CreateForumReplyParams = {
   content: string;
-  forumId: number;
+  forumId: string;
   responderUid: string;
   responderRole: string;
 };
 
 export type UpdateForumReplyParams = {
-  forumId: number;
-  replyId: number;
+  forumId: string;
+  replyId: string;
   content: string;
   userUid: string;
   userRole: string;
@@ -124,15 +124,15 @@ export type UpdateForumReplyParams = {
 
 // Delete Forum Reply Params
 export type DeleteForumReplyParams = {
-  forumId: number;
-  replyId: number;
+  forumId: string;
+  replyId: string;
   userUid: string;
   userRole: string;
 };
 
 // Find Replies Params
 export type FindRepliesParams = PaginationParams & {
-  forumId: number;
+  forumId: string;
 };
 
 // =========================================================================================

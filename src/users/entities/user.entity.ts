@@ -42,14 +42,23 @@ export class User {
   @Column()
   points: number;
 
-  @OneToOne(() => Doctor)
+  @OneToOne(() => Doctor, (doctor) => doctor.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   doctor: Doctor;
 
-  @OneToOne(() => Patient)
+  @OneToOne(() => Patient, (patient) => patient.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   patient: Patient;
 
-  @OneToMany(() => Favorite, (favorite) => favorite.user)
+  @OneToMany(() => Favorite, (favorite) => favorite.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   favorites: Favorite[];
 }

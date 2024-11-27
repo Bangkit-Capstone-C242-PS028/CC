@@ -18,9 +18,21 @@ export class Doctor {
   @Column()
   workplace: string;
 
-  @OneToMany(() => Article, (article) => article.author)
+  @Column({ nullable: true })
+  documentUrl: string;
+
+  @Column({ default: false })
+  isVerified: boolean;
+
+  @OneToMany(() => Article, (article) => article.author, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   articles: Article[];
 
-  @OneToMany(() => Consultation, (consultation) => consultation.doctor)
+  @OneToMany(() => Consultation, (consultation) => consultation.doctor, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   consultations: Consultation[];
 }

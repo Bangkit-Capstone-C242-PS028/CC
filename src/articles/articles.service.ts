@@ -20,6 +20,7 @@ import {
   DEFAULT_PAGE,
   getPaginationParams,
 } from 'src/utils/pagination.helper';
+import { Favorite } from 'src/favorites/entities/favorite.entity';
 
 @Injectable()
 export class ArticlesService {
@@ -28,6 +29,8 @@ export class ArticlesService {
     private readonly articleRepository: Repository<Article>,
     @InjectRepository(Doctor)
     private readonly doctorRepository: Repository<Doctor>,
+    @InjectRepository(Favorite)
+    private readonly favoriteRepository: Repository<Favorite>,
   ) {}
 
   async create(params: CreateArticleParams) {
@@ -48,7 +51,7 @@ export class ArticlesService {
     });
 
     await this.articleRepository.save(article);
-    return this.findOne({ id: article.id });
+    return { articleId: article.id };
   }
 
   async findAll(params: PaginationParams): Promise<PaginatedResponse<Article>> {
@@ -132,7 +135,7 @@ export class ArticlesService {
       );
     }
 
+    await this.favoriteRepository.delete({ article: { id } });
     await this.articleRepository.remove(article);
-    return article;
   }
 }

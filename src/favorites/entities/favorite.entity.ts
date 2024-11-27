@@ -1,25 +1,32 @@
 import {
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
   Index,
+  PrimaryColumn,
+  BeforeInsert,
 } from 'typeorm';
 import { Article } from '../../articles/entities/article.entity';
 import { User } from '../../users/entities/user.entity';
+import { nanoid } from 'nanoid';
 
 @Index(['article', 'user'], { unique: true })
 @Entity({ name: 'favorites' })
 export class Favorite {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  id: string;
+
+  @BeforeInsert()
+  generateId() {
+    this.id = nanoid();
+  }
 
   @CreateDateColumn()
   created_at: Date;
 
-  @ManyToOne(() => Article)
+  @ManyToOne(() => Article, { onDelete: 'CASCADE' })
   article: Article;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 }

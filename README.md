@@ -11,6 +11,7 @@ A comprehensive healthcare platform API built with NestJS, focusing on dermatolo
 - 💬 QA Forums
   - 📝 Forum Replies
 - 🧠 Skin Lesion Detection
+- 🗣️ Consultation
 
 ## Project Setup
 

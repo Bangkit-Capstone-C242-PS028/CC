@@ -57,11 +57,19 @@ export class ForumsController {
     return this.forumsService.findAll({ page, limit });
   }
 
+  @Get('my')
+  @Auth('PATIENT')
+  @ResponseMessage('My forums retrieved successfully')
+  findMyForums(@Req() req) {
+    const { uid } = req.user;
+    return this.forumsService.findMyForums(uid);
+  }
+
   @Get(':id')
   @Auth('DOCTOR', 'PATIENT')
   @ResponseMessage('Forum retrieved successfully')
   findOne(@Param('id') id: string) {
-    return this.forumsService.findOne(+id);
+    return this.forumsService.findOne(id);
   }
 
   @Patch(':id')
@@ -75,7 +83,7 @@ export class ForumsController {
     const { uid } = req.user;
 
     const updateForumDetails: UpdateForumParams = {
-      id: +id,
+      id: id,
       ...updateForumDto,
       patientUid: uid,
     };
@@ -89,7 +97,7 @@ export class ForumsController {
     const { uid } = req.user;
 
     const deleteForumDetails: DeleteForumParams = {
-      id: +id,
+      id: id,
       patientUid: uid,
     };
     return this.forumsService.remove(deleteForumDetails);
@@ -106,7 +114,7 @@ export class ForumsController {
     limit: number,
   ) {
     const findRepliesParams: FindRepliesParams = {
-      forumId: +forumId,
+      forumId: forumId,
       page,
       limit,
     };
@@ -124,7 +132,7 @@ export class ForumsController {
     const { uid, role } = req.user;
     const createReplyParams: CreateForumReplyParams = {
       content: createReplyDto.content,
-      forumId: +forumId,
+      forumId: forumId,
       responderUid: uid,
       responderRole: role,
     };
@@ -142,8 +150,8 @@ export class ForumsController {
   ) {
     const { uid, role } = req.user;
     const updateReplyParams: UpdateForumReplyParams = {
-      forumId: +forumId,
-      replyId: +replyId,
+      forumId: forumId,
+      replyId: replyId,
       content: updateReplyDto.content,
       userUid: uid,
       userRole: role,
@@ -161,8 +169,8 @@ export class ForumsController {
   ) {
     const { uid, role } = req.user;
     const deleteReplyParams: DeleteForumReplyParams = {
-      forumId: +forumId,
-      replyId: +replyId,
+      forumId: forumId,
+      replyId: replyId,
       userUid: uid,
       userRole: role,
     };

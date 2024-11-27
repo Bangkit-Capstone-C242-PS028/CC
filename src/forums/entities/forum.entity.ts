@@ -1,20 +1,27 @@
 import { Doctor } from 'src/users/entities/doctor.entity';
 import { Patient } from 'src/users/entities/patient.entity';
 import {
-  Entity,
-  PrimaryGeneratedColumn,
+  BeforeInsert,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
+  Entity,
   ManyToOne,
   OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { nanoid } from 'nanoid';
 import { ForumReply } from './forum-reply.entity';
 
 @Entity('forums')
 export class Forum {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  id: string;
+
+  @BeforeInsert()
+  generateId() {
+    this.id = nanoid();
+  }
 
   @Column()
   title: string;
@@ -31,12 +38,15 @@ export class Forum {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToOne(() => Patient)
+  @ManyToOne(() => Patient, { onDelete: 'CASCADE' })
   patient: Patient;
 
-  @ManyToOne(() => Doctor, { nullable: true })
+  @ManyToOne(() => Doctor, { onDelete: 'CASCADE' })
   doctor: Doctor;
 
-  @OneToMany(() => ForumReply, (reply) => reply.forum, { nullable: true })
+  @OneToMany(() => ForumReply, (reply) => reply.forum, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   replies: ForumReply[];
 }

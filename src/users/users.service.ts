@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +17,7 @@ import { Patient } from './entities/patient.entity';
 import { User } from './entities/user.entity';
 import { DEFAULT_PAGE, getPaginationParams } from 'src/utils/pagination.helper';
 import { DEFAULT_LIMIT } from 'src/utils/pagination.helper';
+import { StorageService } from 'src/infrastructure/storage/storage.service';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +30,8 @@ export class UsersService {
     private readonly patientRepository: Repository<Patient>,
 
     private readonly firebaseAdmin: FirebaseAdmin,
+
+    private readonly storageService: StorageService,
   ) {}
 
   async findAll(params: FindAllUsersParams) {
@@ -97,10 +104,32 @@ export class UsersService {
   async remove(params: DeleteUserParams) {
     const { uid } = params;
     const user = await this.findOne({ uid });
-
     await this.firebaseAdmin.setup().auth().deleteUser(uid);
-    await this.userRepository.remove(user);
 
-    return user;
+    await this.userRepository.delete(uid);
+    if (user.role === 'DOCTOR') {
+      await this.doctorRepository.delete({ uid });
+    } else {
+      await this.patientRepository.delete({ uid });
+    }
+  }
+
+  async uploadDoctorDocument(uid: string, file: Express.Multer.File) {
+    const doctor = await this.doctorRepository.findOne({ where: { uid } });
+    if (!doctor) {
+      throw new NotFoundException('Doctor not found');
+    }
+    if (doctor.documentUrl) {
+      throw new BadRequestException('Doctor document already uploaded');
+    }
+    const fileName = `doctors/${uid}/document`;
+    const documentUrl = await this.storageService.save(
+      fileName,
+      file.mimetype,
+      file.buffer,
+      [{ id: uid }],
+    );
+
+    await this.doctorRepository.update(uid, { documentUrl });
   }
 }

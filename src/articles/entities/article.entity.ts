@@ -1,17 +1,24 @@
 import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { Doctor } from 'src/users/entities/doctor.entity';
 import {
+  BeforeInsert,
   Column,
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
+import { nanoid } from 'nanoid';
 
 @Entity({ name: 'articles' })
 export class Article {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  id: string;
+
+  @BeforeInsert()
+  generateId() {
+    this.id = nanoid();
+  }
 
   @Column()
   title: string;
@@ -19,7 +26,7 @@ export class Article {
   @Column()
   content: string;
 
-  @ManyToOne(() => Doctor, (doctor) => doctor.articles)
+  @ManyToOne(() => Doctor, (doctor) => doctor.articles, { onDelete: 'CASCADE' })
   author: Doctor;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -28,6 +35,9 @@ export class Article {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
 
-  @OneToMany(() => Favorite, (favorite) => favorite.article)
+  @OneToMany(() => Favorite, (favorite) => favorite.article, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   favorites: Favorite[];
 }

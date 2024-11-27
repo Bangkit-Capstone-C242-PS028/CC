@@ -21,19 +21,13 @@ export class TransformInterceptor<T>
     next: CallHandler,
   ): Observable<ApiResponse<T>> {
     return next.handle().pipe(
-      map((data) => {
-        const message =
+      map((data) => ({
+        statusCode: context.switchToHttp().getResponse().statusCode,
+        message:
           this.reflector.get<string>(RESPONSE_MESSAGE, context.getHandler()) ||
-          'Operation successful';
-
-        return {
-          statusCode: context.switchToHttp().getResponse().statusCode,
-          success: {
-            message,
-            data,
-          },
-        };
-      }),
+          'Operation successful',
+        data: data || undefined,
+      })),
     );
   }
 }

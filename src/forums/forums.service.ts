@@ -59,7 +59,8 @@ export class ForumsService {
       patient,
     });
 
-    return this.forumRepository.save(forum);
+    await this.forumRepository.save(forum);
+    return { forumId: forum.id };
   }
 
   async findAll(params: PaginationParams): Promise<PaginatedResponse<Forum>> {
@@ -90,7 +91,7 @@ export class ForumsService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const forum = await this.forumRepository.findOne({
       where: { id },
       relations: {
@@ -108,6 +109,13 @@ export class ForumsService {
     }
 
     return forum;
+  }
+
+  async findMyForums(patientUid: string) {
+    const forums = await this.forumRepository.find({
+      where: { patient: { uid: patientUid } },
+    });
+    return forums;
   }
 
   async update(updateForumDetails: UpdateForumParams) {
@@ -159,8 +167,14 @@ export class ForumsService {
       throw new ForbiddenException('You can only delete open forums');
     }
 
-    await this.forumRepository.delete(id);
-    return forum;
+    try {
+      if (forum.replies?.length > 0) {
+        await this.forumReplyRepository.remove(forum.replies);
+      }
+      await this.forumRepository.delete(id);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findReplies(
@@ -178,7 +192,7 @@ export class ForumsService {
     }
 
     const [data, total] = await this.forumReplyRepository.findAndCount({
-      where: { forum_id: forumId },
+      where: { forum: { id: forumId } },
       relations: ['responder'],
       take,
       skip,
@@ -228,20 +242,20 @@ export class ForumsService {
 
     const reply = this.forumReplyRepository.create({
       content,
-      forum_id: forumId,
       responder_role: responderRole,
       responder: user,
       forum,
     });
 
-    return this.forumReplyRepository.save(reply);
+    await this.forumReplyRepository.save(reply);
+    return { replyId: reply.id };
   }
 
   async updateReply(params: UpdateForumReplyParams) {
     const { forumId, replyId, content, userUid, userRole } = params;
 
     const reply = await this.forumReplyRepository.findOne({
-      where: { id: replyId, forum_id: forumId },
+      where: { id: replyId, forum: { id: forumId } },
       relations: ['responder'],
     });
 
@@ -268,7 +282,7 @@ export class ForumsService {
     const { forumId, replyId, userUid, userRole } = params;
 
     const reply = await this.forumReplyRepository.findOne({
-      where: { id: replyId, forum_id: forumId },
+      where: { id: replyId, forum: { id: forumId } },
       relations: ['responder', 'forum'],
     });
 
@@ -283,7 +297,7 @@ export class ForumsService {
     if (userRole === 'DOCTOR') {
       const doctorReplies = await this.forumReplyRepository.count({
         where: {
-          forum_id: forumId,
+          forum: { id: forumId },
           responder_role: 'DOCTOR',
           id: Not(replyId),
         },
@@ -298,6 +312,6 @@ export class ForumsService {
     }
 
     await this.forumReplyRepository.remove(reply);
-    return reply;
+    return;
   }
 }
