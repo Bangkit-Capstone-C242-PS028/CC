@@ -21,6 +21,7 @@ import {
   getPaginationParams,
 } from 'src/utils/pagination.helper';
 import { Favorite } from 'src/favorites/entities/favorite.entity';
+import { StorageService } from 'src/infrastructure/storage/storage.service';
 
 @Injectable()
 export class ArticlesService {
@@ -31,11 +32,11 @@ export class ArticlesService {
     private readonly doctorRepository: Repository<Doctor>,
     @InjectRepository(Favorite)
     private readonly favoriteRepository: Repository<Favorite>,
+    private readonly storageService: StorageService,
   ) {}
 
   async create(params: CreateArticleParams) {
-    const { title, content, authorUid } = params;
-
+    const { title, content, authorUid, image } = params;
     const doctor = await this.doctorRepository.findOne({
       where: { uid: authorUid },
     });
@@ -51,6 +52,17 @@ export class ArticlesService {
     });
 
     await this.articleRepository.save(article);
+
+    const imageUrl = await this.storageService.save(
+      `articles/${doctor.uid}/${article.id}`,
+      image.mimetype,
+      image.buffer,
+      [{ id: article.id }],
+    );
+    console.log(imageUrl);
+
+    await this.articleRepository.update(article.id, { imageUrl });
+
     return { articleId: article.id };
   }
 
@@ -94,7 +106,7 @@ export class ArticlesService {
   }
 
   async update(params: UpdateArticleParams) {
-    const { id, title, content, authorUid } = params;
+    const { id, title, content, authorUid, image } = params;
 
     const article = await this.articleRepository.findOne({
       where: { id },
@@ -111,9 +123,21 @@ export class ArticlesService {
       );
     }
 
+    let imageUrl;
+    if (image) {
+      await this.storageService.delete(`articles/${article.author.uid}/${id}`);
+      imageUrl = await this.storageService.save(
+        `articles/${article.author.uid}/${id}`,
+        image.mimetype,
+        image.buffer,
+        [{ id }],
+      );
+    }
+
     await this.articleRepository.update(id, {
       ...(title && { title }),
       ...(content && { content }),
+      ...(imageUrl && { imageUrl }),
       updated_at: new Date(),
     });
 
