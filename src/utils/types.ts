@@ -39,6 +39,7 @@ export type CreateArticleParams = {
   title: string;
   content: string;
   authorUid: string;
+  image: Express.Multer.File;
 };
 
 // Update Article Params
@@ -47,6 +48,7 @@ export type UpdateArticleParams = {
   title?: string;
   content?: string;
   authorUid: string;
+  image?: Express.Multer.File;
 };
 
 export type FindArticleParams = {

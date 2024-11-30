@@ -26,6 +26,9 @@ export class Article {
   @Column()
   content: string;
 
+  @Column({ nullable: true })
+  imageUrl: string;
+
   @ManyToOne(() => Doctor, (doctor) => doctor.articles, { onDelete: 'CASCADE' })
   author: Doctor;
 
