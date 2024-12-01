@@ -8,6 +8,7 @@ import {
   IsAlpha,
   IsISO8601,
   ValidateIf,
+  IsUrl,
 } from 'class-validator';
 
 enum Role {
@@ -66,4 +67,9 @@ export class UserSignupDto {
   @ValidateIf((o) => o.role === Role.DOCTOR)
   @IsNotEmpty()
   workplace: string;
+
+  @ValidateIf((o) => o.role === Role.DOCTOR)
+  @IsNotEmpty()
+  @IsUrl()
+  whatsappUrl: string;
 }
