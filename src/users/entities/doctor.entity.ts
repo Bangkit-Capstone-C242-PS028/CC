@@ -24,6 +24,9 @@ export class Doctor {
   @Column({ default: false })
   isVerified: boolean;
 
+  @Column()
+  whatsappUrl: string;
+
   @OneToMany(() => Article, (article) => article.author, {
     cascade: true,
     onDelete: 'CASCADE',
