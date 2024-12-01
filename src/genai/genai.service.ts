@@ -3,9 +3,13 @@ import { VertexaiService } from 'src/infrastructure/vertexai/vertexai.service';
 
 @Injectable()
 export class GenaiService {
-  constructor(private readonly genaiService: VertexaiService) {}
+  constructor(private readonly vertexaiService: VertexaiService) {}
 
   async chat(message: string) {
-    return this.genaiService.chat(message);
+    return this.vertexaiService.chat(message);
+  }
+
+  async rephrase(text: string) {
+    return this.vertexaiService.rephrase(text);
   }
 }

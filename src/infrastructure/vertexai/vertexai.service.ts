@@ -1,11 +1,11 @@
-import { VertexAI } from '@google-cloud/vertexai';
-
 import { Injectable } from '@nestjs/common';
+import { VertexAI } from '@google-cloud/vertexai';
 
 @Injectable()
 export class VertexaiService {
   private readonly vertexAI: VertexAI;
-  private readonly generativeModel;
+  private readonly chatbotModel;
+  private readonly rephraseModel;
 
   constructor() {
     this.vertexAI = new VertexAI({
@@ -13,27 +13,46 @@ export class VertexaiService {
       location: process.env.VERTEX_AI_LOCATION,
     });
 
-    this.generativeModel = this.vertexAI.getGenerativeModel({
+    this.chatbotModel = this.vertexAI.getGenerativeModel({
       model: 'gemini-1.5-flash',
-      systemInstruction: {
-        role: 'system',
-        parts: [
-          { text: `For example, you are a helpful customer service agent.` },
-        ],
+      generationConfig: {
+        maxOutputTokens: 2048,
+      },
+    });
+
+    this.rephraseModel = this.vertexAI.getGenerativeModel({
+      model: 'gemini-1.5-flash',
+      generationConfig: {
+        maxOutputTokens: 1024,
       },
     });
   }
 
   async chat(message: string) {
-    try {
-      const chat = this.generativeModel.startChat();
-      const result = await chat.sendMessage(message);
-      const response = await result.response;
-      return {
-        reply: response,
-      };
-    } catch (error) {
-      console.error(error);
-    }
+    const result = await this.chatbotModel.generateContent({
+      contents: [
+        {
+          role: 'user',
+          parts: [{ text: message }],
+        },
+      ],
+    });
+    return { reply: result.response.candidates[0].content.parts[0].text };
+  }
+
+  async rephrase(text: string) {
+    const result = await this.rephraseModel.generateContent({
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: `Please rephrase this medical question professionally: "${text}"`,
+            },
+          ],
+        },
+      ],
+    });
+    return { reply: result.response.candidates[0].content.parts[0].text };
   }
 }
