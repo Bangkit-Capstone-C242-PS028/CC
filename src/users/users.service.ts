@@ -122,7 +122,7 @@ export class UsersService {
     if (doctor.documentUrl) {
       throw new BadRequestException('Doctor document already uploaded');
     }
-    const fileName = `doctors/${uid}/document`;
+    const fileName = `doctors-documents/${uid}`;
     const documentUrl = await this.storageService.save(
       fileName,
       file.mimetype,
