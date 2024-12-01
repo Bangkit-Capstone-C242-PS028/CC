@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,8 +26,6 @@ export class UsersService {
     private readonly patientRepository: Repository<Patient>,
 
     private readonly firebaseAdmin: FirebaseAdmin,
-
-    private readonly storageService: StorageService,
   ) {}
 
   async findAll(params: FindAllUsersParams) {
@@ -112,24 +106,5 @@ export class UsersService {
     } else {
       await this.patientRepository.delete({ uid });
     }
-  }
-
-  async uploadDoctorDocument(uid: string, file: Express.Multer.File) {
-    const doctor = await this.doctorRepository.findOne({ where: { uid } });
-    if (!doctor) {
-      throw new NotFoundException('Doctor not found');
-    }
-    if (doctor.documentUrl) {
-      throw new BadRequestException('Doctor document already uploaded');
-    }
-    const fileName = `doctors/${uid}/document`;
-    const documentUrl = await this.storageService.save(
-      fileName,
-      file.mimetype,
-      file.buffer,
-      [{ id: uid }],
-    );
-
-    await this.doctorRepository.update(uid, { documentUrl });
   }
 }

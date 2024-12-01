@@ -6,6 +6,7 @@ import { SignUpUserParams } from 'src/utils/types';
 import { Doctor } from '../users/entities/doctor.entity';
 import { Patient } from '../users/entities/patient.entity';
 import { User } from '../users/entities/user.entity';
+import { StorageService } from 'src/infrastructure/storage/storage.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +18,7 @@ export class AuthService {
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
     private readonly firebaseAdmin: FirebaseAdmin,
+    private readonly storageService: StorageService,
   ) {}
 
   async createUser(userRequest: SignUpUserParams): Promise<User> {
@@ -65,12 +67,23 @@ export class AuthService {
     uid: string,
     user: User,
   ) {
-    const { specialization, workplace } = userRequest;
+    const { specialization, workplace, whatsappUrl, document } = userRequest;
+
+    const fileName = `doctors-documents/${uid}`;
+    const documentUrl = await this.storageService.save(
+      fileName,
+      document.mimetype,
+      document.buffer,
+      [{ id: uid }],
+    );
+
     const newDoctor = this.doctorRepository.create({
       uid,
       user,
       specialization,
       workplace,
+      whatsappUrl,
+      documentUrl,
     });
     await this.doctorRepository.save(newDoctor);
 
