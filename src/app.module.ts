@@ -23,6 +23,8 @@ import { PubsubModule } from './infrastructure/pubsub/pubsub.module';
 import { Consultation } from './consultations/entities/consultation.entity';
 import { ConsultationMessage } from './consultations/entities/consultation-message.entity';
 import { ConsultationsModule } from './consultations/consultations.module';
+import { VertexaiModule } from './infrastructure/vertexai/vertexai.module';
+import { GenaiModule } from './genai/genai.module';
 
 @Module({
   imports: [
@@ -84,6 +86,10 @@ import { ConsultationsModule } from './consultations/consultations.module';
     PubsubModule,
 
     ConsultationsModule,
+
+    VertexaiModule,
+
+    GenaiModule,
   ],
   controllers: [AppController],
   providers: [AppService, FirebaseAdmin],
