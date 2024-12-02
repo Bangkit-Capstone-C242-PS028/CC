@@ -20,6 +20,18 @@ import { ResponseMessage } from 'src/common/decorators/response-message.decorato
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('me')
+  @Auth('PATIENT', 'DOCTOR')
+  @ResponseMessage('User retrieved successfully')
+  findMe(@Req() req) {
+    const { uid } = req.user;
+    const findUserDetails = {
+      uid,
+    };
+    return this.usersService.findOne(findUserDetails);
+  }
+
   @Patch('me')
   @Auth('PATIENT', 'DOCTOR')
   @ResponseMessage('User updated successfully')
