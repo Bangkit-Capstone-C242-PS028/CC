@@ -25,15 +25,21 @@ export class SkinLesionsService {
   constructor(
     @InjectRepository(SkinLesion)
     private skinLesionRepository: Repository<SkinLesion>,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+
     private storageService: StorageService,
     private pubsubService: PubsubService,
-    private usersService: UsersService,
   ) {}
 
   async create(params: CreateSkinLesionParams) {
     const { patientUid, image } = params;
 
-    const patient = await this.usersService.findOne({ uid: patientUid });
+    const patient = await this.userRepository.findOne({
+      where: { uid: params.patientUid },
+      relations: ['doctor', 'patient'],
+    });
 
     if (!patient) {
       throw new NotFoundException('Patient not found');
