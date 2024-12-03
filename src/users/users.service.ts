@@ -13,7 +13,6 @@ import { Patient } from './entities/patient.entity';
 import { User } from './entities/user.entity';
 import { DEFAULT_PAGE, getPaginationParams } from 'src/utils/pagination.helper';
 import { DEFAULT_LIMIT } from 'src/utils/pagination.helper';
-import { StorageService } from 'src/infrastructure/storage/storage.service';
 
 @Injectable()
 export class UsersService {
@@ -47,7 +46,11 @@ export class UsersService {
       .getManyAndCount();
 
     return {
-      data,
+      data: data.map((user) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      }),
       meta: {
         total,
         page,
@@ -67,7 +70,9 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    return user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   async update(params: UpdateUserParams) {
