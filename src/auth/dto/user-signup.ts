@@ -27,18 +27,22 @@ export class UserSignupDto {
 
   @IsNotEmpty()
   @MinLength(8)
-  @MaxLength(20)
-  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,20}$/, {
-    message: 'password too weak',
-  })
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_-])[A-Za-z\d@$!%*?&_-]{8,}$/,
+    {
+      message: 'password too weak',
+    },
+  )
   password: string;
 
   @IsNotEmpty()
   @MinLength(8)
-  @MaxLength(20)
-  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,20}$/, {
-    message: 'password too weak',
-  })
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_-])[A-Za-z\d@$!%*?&_-]{8,}$/,
+    {
+      message: 'password too weak',
+    },
+  )
   confirmPassword: string;
 
   @IsNotEmpty()
