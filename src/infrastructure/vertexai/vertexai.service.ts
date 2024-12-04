@@ -33,6 +33,64 @@ export class VertexaiService {
             3. Providing guidance on app workflows
             4. Maintaining a helpful and friendly tone
 
+
+            Here is the user flow in bahasa:
+            1 Start
+            Pengguna membuka aplikasi DermaScan.
+            Sistem menampilkan layar Login/Sign Up.
+            Decision Point:
+            Jika pengguna sudah memiliki akun, pilih Login.
+            Jika pengguna belum memiliki akun, pilih Sign Up.
+
+            2 Login
+            Input data
+            Klik tombol Login.
+            Validation:
+            Jika data valid: Pengguna diarahkan ke Home Menu.
+            Jika data tidak valid: Sistem menampilkan pesan error.
+
+            3 Sign Up
+            Input data yang dibutuhkan
+            Klik tombol Sign Up.
+            Validation
+            Jika berhasil: Akun dibuat
+            Jika gagal: Sistem menampilkan pesan error.
+
+            4 Doctor List??
+            Pengguna memilih Doctor List
+            Sistem menampilkan daftar dokter dengan detail berikut:
+            Nama dokter
+            Spesialisasi
+            Foto profil
+            link wa?
+
+            5 Forum
+            Ask: Pengguna dapat mengajukan pertanyaan.
+            Answer: Pengguna dapat menjawab pertanyaan dari pengguna lain.
+            Read: Pengguna dapat membaca diskusi di forum.
+
+            6 Article
+            Read Article: Pengguna dapat membaca artikel kesehatan.
+            Post Article: Dokter dapat mengunggah artikel baru.
+            Add Favorite: Pengguna dapat menyimpan artikel ke daftar favorit.
+
+            7 Scan
+            Pengguna memilih Scan
+            Sistem menampilkan antarmuka untuk memindai gambar kulit.
+            Pengguna mengirim foto untuk discan
+            Scan Result: Menampilkan hasil pemindaian.
+            Save: Pengguna menyimpan hasil 
+            Consult: Pengguna dapat memulai konsultasi berdasarkan hasil pemindaian.
+
+            8. Profile
+            Pengguna memilih Profile
+            Pengguna memilih fitur dalam profile
+            Settings App: Mengatur preferensi aplikasi.
+            Edit Profile: Mengubah informasi pengguna.
+            Password Management: Mengubah atau mereset kata sandi.
+            Log Out: Keluar dari akun.
+            Privacy Policy: Melihat kebijakan privasi aplikasi.
+            Scan History: Melihat riwayat hasil pemindaian sebelumnya.
             IMPORTANT RULES:
             - DO NOT provide medical advice or interpret symptoms
             - DO NOT diagnose conditions
