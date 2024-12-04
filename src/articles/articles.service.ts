@@ -66,7 +66,7 @@ export class ArticlesService {
     return { articleId: article.id };
   }
 
-  async findAll(params: PaginationParams): Promise<PaginatedResponse<Article>> {
+  async findAll(params: PaginationParams) {
     const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
@@ -82,7 +82,13 @@ export class ArticlesService {
     });
 
     return {
-      data,
+      data: data.map((article) => ({
+        ...article,
+        author: {
+          ...article.author,
+          user: article.author.user.toResponse(),
+        },
+      })),
       meta: {
         total,
         page,
@@ -102,7 +108,13 @@ export class ArticlesService {
       throw new NotFoundException('Article not found');
     }
 
-    return article;
+    return {
+      ...article,
+      author: {
+        ...article.author,
+        user: article.author.user.toResponse(),
+      },
+    };
   }
 
   async update(params: UpdateArticleParams) {
@@ -147,8 +159,11 @@ export class ArticlesService {
   async remove(params: DeleteArticleParams) {
     const { id, authorUid } = params;
 
-    const article = await this.findOne({ id });
-
+    const article = await this.articleRepository.findOne({
+      where: { id },
+      relations: { author: true },
+    });
+    
     if (!article) {
       throw new NotFoundException('Article not found');
     }

@@ -26,6 +26,7 @@ import {
   DEFAULT_PAGE,
   getPaginationParams,
 } from 'src/utils/pagination.helper';
+import { async, skip, take } from 'rxjs';
 
 @Injectable()
 export class ForumsService {
@@ -63,7 +64,7 @@ export class ForumsService {
     return { forumId: forum.id };
   }
 
-  async findAll(params: PaginationParams): Promise<PaginatedResponse<Forum>> {
+  async findAll(params: PaginationParams) {
     const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
@@ -82,7 +83,13 @@ export class ForumsService {
     });
 
     return {
-      data,
+      data: data.map(forum => ({
+        ...forum,
+        patient: {
+          ...forum.patient,
+          user: forum.patient.user.toResponse(),
+        }
+      })),
       meta: {
         total,
         page,
@@ -108,7 +115,13 @@ export class ForumsService {
       throw new NotFoundException('Forum not found');
     }
 
-    return forum;
+    return {
+      ...forum,
+      patient: {
+        ...forum.patient,
+        user: forum.patient.user.toResponse(),
+      }
+    };
   }
 
   async findMyForums(patientUid: string) {
@@ -179,7 +192,7 @@ export class ForumsService {
 
   async findReplies(
     params: FindRepliesParams,
-  ): Promise<PaginatedResponse<ForumReply>> {
+  ) {
     const { forumId, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
@@ -200,7 +213,10 @@ export class ForumsService {
     });
 
     return {
-      data,
+      data: data.map(reply => ({
+        ...reply,
+        responder: reply.responder.toResponse()
+      })),
       meta: {
         total,
         page,

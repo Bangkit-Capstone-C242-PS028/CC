@@ -64,4 +64,10 @@ export class User {
     onDelete: 'CASCADE',
   })
   favorites: Favorite[];
+
+  toResponse() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userWithoutPassword } = this;
+    return userWithoutPassword;
+  }
 }

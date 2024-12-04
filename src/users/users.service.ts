@@ -46,11 +46,7 @@ export class UsersService {
       .getManyAndCount();
 
     return {
-      data: data.map((user) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password, ...userWithoutPassword } = user;
-        return userWithoutPassword;
-      }),
+      data: data.map((user) => user.toResponse()),
       meta: {
         total,
         page,
@@ -70,9 +66,7 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return user.toResponse();
   }
 
   async update(params: UpdateUserParams) {
