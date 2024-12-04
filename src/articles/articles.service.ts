@@ -22,6 +22,7 @@ import {
 } from 'src/utils/pagination.helper';
 import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { StorageService } from 'src/infrastructure/storage/storage.service';
+import { title } from 'process';
 
 @Injectable()
 export class ArticlesService {
@@ -59,7 +60,6 @@ export class ArticlesService {
       image.buffer,
       [{ id: article.id }],
     );
-    console.log(imageUrl);
 
     await this.articleRepository.update(article.id, { imageUrl });
 
@@ -82,12 +82,16 @@ export class ArticlesService {
     });
 
     return {
-      data: data.map((article) => ({
-        ...article,
-        author: {
-          ...article.author,
-          user: article.author.user.toResponse(),
-        },
+      articles: data.map((article) => ({
+        id: article.id,
+        title: article.title,
+        content: article.content,
+        image_url: article.imageUrl,
+        created_at: article.created_at,
+        updated_at: article.updated_at,
+        name:
+          article.author.user.firstName + ' ' + article.author.user.lastName,
+        avatar: article.author.user.photoUrl,
       })),
       meta: {
         total,
@@ -109,11 +113,14 @@ export class ArticlesService {
     }
 
     return {
-      ...article,
-      author: {
-        ...article.author,
-        user: article.author.user.toResponse(),
-      },
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      image_url: article.imageUrl,
+      created_at: article.created_at,
+      updated_at: article.updated_at,
+      name: article.author.user.firstName + ' ' + article.author.user.lastName,
+      avatar: article.author.user.photoUrl,
     };
   }
 
@@ -163,7 +170,7 @@ export class ArticlesService {
       where: { id },
       relations: { author: true },
     });
-    
+
     if (!article) {
       throw new NotFoundException('Article not found');
     }
