@@ -6,6 +6,9 @@ import {
   Patch,
   Delete,
   Req,
+  BadRequestException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   FindAllUsersParams,
@@ -16,6 +19,7 @@ import { UsersService } from './users.service';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UsersController {
@@ -34,12 +38,25 @@ export class UsersController {
 
   @Patch('me')
   @Auth('PATIENT', 'DOCTOR')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      limits: { fileSize: 1024 * 1024 * 1 },
+      fileFilter: (_req, file, cb) => {
+        if (!file.mimetype.match(/^image\/(jpg|jpeg|png|gif)$/)) {
+          cb(new BadRequestException('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
   @ResponseMessage('User updated successfully')
-  updateMe(@Body() updateUserDto: UpdateUserDto, @Req() req) {
+  updateMe(@Body() updateUserDto: UpdateUserDto, @Req() req,
+  @UploadedFile() image?: Express.Multer.File,) {
     const { uid, role } = req.user;
     const updateUserDetails: UpdateUserParams = {
       uid,
       ...updateUserDto,
+      image,
     };
 
     // Only doctors can update specialization and workplace

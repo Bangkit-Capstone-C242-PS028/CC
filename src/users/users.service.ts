@@ -13,6 +13,7 @@ import { Patient } from './entities/patient.entity';
 import { User } from './entities/user.entity';
 import { DEFAULT_PAGE, getPaginationParams } from 'src/utils/pagination.helper';
 import { DEFAULT_LIMIT } from 'src/utils/pagination.helper';
+import { StorageService } from 'src/infrastructure/storage/storage.service';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,7 @@ export class UsersService {
     private readonly patientRepository: Repository<Patient>,
 
     private readonly firebaseAdmin: FirebaseAdmin,
+    private readonly storageService: StorageService,
   ) {}
 
   async findAll(params: FindAllUsersParams) {
@@ -70,7 +72,7 @@ export class UsersService {
   }
 
   async update(params: UpdateUserParams) {
-    const { uid, ...updateData } = params;
+    const { uid, image, ...updateData } = params;
     const user = await this.findOne({ uid });
 
     await this.userRepository.update(uid, {
@@ -87,6 +89,25 @@ export class UsersService {
         {
           specialization: updateData.specialization,
           workplace: updateData.workplace,
+        },
+      );
+    }
+
+    if (image) {
+      if (user.photoUrl) {
+        await this.storageService.delete(`users/${uid}/profile`);
+      }
+
+      const photoUrl = await this.storageService.save(
+        `users/${uid}/profile`,
+        image.mimetype,
+        image.buffer,
+        [{ id: uid }],
+      );
+      await this.userRepository.update(
+        { uid },
+        {
+          photoUrl,
         },
       );
     }

@@ -45,6 +45,9 @@ export class User {
   @Column()
   points: number;
 
+  @Column({ nullable: true })
+  photoUrl: string;
+
   @OneToOne(() => Doctor, (doctor) => doctor.user, {
     cascade: true,
     onDelete: 'CASCADE',
