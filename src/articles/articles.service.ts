@@ -23,6 +23,7 @@ import {
 import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { StorageService } from 'src/infrastructure/storage/storage.service';
 import { title } from 'process';
+import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
 
 @Injectable()
 export class ArticlesService {
@@ -34,7 +35,26 @@ export class ArticlesService {
     @InjectRepository(Favorite)
     private readonly favoriteRepository: Repository<Favorite>,
     private readonly storageService: StorageService,
+    private readonly firebaseAdmin: FirebaseAdmin,
   ) {}
+
+  private async sendNewArticleNotification(article: Article) {
+    const message = {
+      notification: {
+        title: 'New Article Published',
+        body: `A new article titled "${article.title}" has been published.`,
+        image: article.imageUrl,
+      },
+      topic: 'articles',
+    };
+
+    try {
+      await this.firebaseAdmin.setup().messaging().send(message);
+      console.log('Notification sent successfully');
+    } catch (error) {
+      console.error('Error sending notification:', error);
+    }
+  }
 
   async create(params: CreateArticleParams) {
     const { title, content, authorUid, image } = params;
@@ -63,6 +83,7 @@ export class ArticlesService {
 
     await this.articleRepository.update(article.id, { imageUrl });
 
+    await this.sendNewArticleNotification(article);
     return { articleId: article.id };
   }
 
