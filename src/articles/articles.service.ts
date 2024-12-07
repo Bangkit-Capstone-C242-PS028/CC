@@ -43,7 +43,7 @@ export class ArticlesService {
   private async sendNewArticleNotification(article: Article) {
     const message = {
       notification: {
-        title: 'Sparky says hello!',
+        title: 'New Article Published',
         body: `A new article titled "${article.title}" has been published.`,
       },
       android: {
