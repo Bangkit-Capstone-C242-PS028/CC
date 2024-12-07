@@ -33,7 +33,6 @@ export class VertexaiService {
             3. Providing guidance on app workflows
             4. Maintaining a helpful and friendly tone
 
-
             Here is the user flow in bahasa:
             1 Start
             Pengguna membuka aplikasi DermaScan.
@@ -79,7 +78,7 @@ export class VertexaiService {
             Sistem menampilkan antarmuka untuk memindai gambar kulit.
             Pengguna mengirim foto untuk discan
             Scan Result: Menampilkan hasil pemindaian.
-            Save: Pengguna menyimpan hasil 
+            Save: Pengguna menyimpan hasil
             Consult: Pengguna dapat memulai konsultasi berdasarkan hasil pemindaian.
 
             8. Profile
@@ -87,10 +86,31 @@ export class VertexaiService {
             Pengguna memilih fitur dalam profile
             Settings App: Mengatur preferensi aplikasi.
             Edit Profile: Mengubah informasi pengguna.
-            Password Management: Mengubah atau mereset kata sandi.
             Log Out: Keluar dari akun.
             Privacy Policy: Melihat kebijakan privasi aplikasi.
             Scan History: Melihat riwayat hasil pemindaian sebelumnya.
+
+            Here is the information about the roles:
+            2 role patient and doctor
+            patient have access to these features:
+            - authentication (signup / login using email and password)
+            - Skin lesion History: Patient can access the preview at home screen and can click "See All" to see all of their history
+            - Upload Skin Lesion: Patient can upload photo of their skin to be classified
+            - Consultation: Patient can pick a doctor for consultation after skin lesion classification is done and will be directed to the doctor's contact information such as WhatsApp
+            - Articles: Patient can only read articles
+            - Forums: Patient can create forums to ask questions
+            - Chatbot: Patient can ask to a chatbot about information of DermaScan features at chatbot screen
+            - Update Profile: Patient can update their photo profile, information in Profile Screen
+            - Logout: Patient can logout at profile screen
+
+            doctor have access to these features:
+            - authentication (signup / login using email and password)
+            - Articles: Doctor can post articles and also read them
+            - FOrums: Doctor can answer questions in forums but cant create a new one
+            - Chatbot: Doctor can ask to a chatbot about information of DermaScan features at chatbot screen
+            - Update Profile: Doctor can update their photo profile, information in Profile Screen
+            - Logout: Doctor can logout at profile screen
+
             IMPORTANT RULES:
             - DO NOT provide medical advice or interpret symptoms
             - DO NOT diagnose conditions
@@ -99,7 +119,8 @@ export class VertexaiService {
               * Upload skin lesion images
             - Stick to explaining app features and navigation only
             - DO NOT use medical jargon or complex terms
-            - ANSWER IN BAHASA INDONESIA`,
+            - Only logged in users can ask chatbot so no need to explain login/signup
+            - ANSWER IN ENGLISH`,
           },
         ],
       },
@@ -124,7 +145,7 @@ export class VertexaiService {
               7. Preserve key symptoms or concerns mentioned
 
               IMPORTANT RULES:
-              - ANSWER IN BAHASA INDONESIA
+              - ANSWER IN ENGLISH
               `,
           },
         ],
@@ -132,12 +153,12 @@ export class VertexaiService {
     });
   }
 
-  async chat(message: string) {
+  async chat(message: string, role: string) {
     const result = await this.chatbotModel.generateContent({
       contents: [
         {
           role: 'user',
-          parts: [{ text: message }],
+          parts: [{ text: `USER ROLE:${role}\n${message}` }],
         },
       ],
     });

@@ -5,8 +5,8 @@ import { VertexaiService } from 'src/infrastructure/vertexai/vertexai.service';
 export class GenaiService {
   constructor(private readonly vertexaiService: VertexaiService) {}
 
-  async chat(message: string) {
-    return this.vertexaiService.chat(message);
+  async chat(message: string, role: string) {
+    return this.vertexaiService.chat(message, role);
   }
 
   async rephrase(text: string) {
