@@ -33,19 +33,27 @@ export class UsersService {
     const { role, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
-    const queryBuilder = this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.doctor', 'doctor')
-      .leftJoinAndSelect('user.patient', 'patient');
+    // const queryBuilder = this.userRepository
+    //   .createQueryBuilder('user')
+    //   .leftJoinAndSelect('user.doctor', 'doctor')
+    //   .leftJoinAndSelect('user.patient', 'patient')
 
-    if (role) {
-      queryBuilder.where('user.role = :role', { role });
-    }
+    // if (role) {
+    //   queryBuilder.where('user.role = :role', { role });
+    // }
 
-    const [data, total] = await queryBuilder
-      .take(take)
-      .skip(skip)
-      .getManyAndCount();
+    // const [data, total] = await queryBuilder
+    //   .take(take)
+    //   .skip(skip)
+    //   .getManyAndCount();
+
+    const [data, total] = await this.userRepository.findAndCount({
+      where: role ? { role } : {},
+      relations: ['doctor', 'patient'],
+      order: { firstName: 'ASC', lastName: 'ASC' },
+      take,
+      skip,
+    });
 
     return {
       data: data.map((user) => user.toResponse()),
