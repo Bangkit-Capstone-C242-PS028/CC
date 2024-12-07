@@ -41,17 +41,14 @@ export class UsersController {
   @UseInterceptors(
     FileInterceptor('image', {
       limits: { fileSize: 1024 * 1024 * 1 },
-      fileFilter: (_req, file, cb) => {
-        if (!file.mimetype.match(/^image\/(jpg|jpeg|png|gif)$/)) {
-          cb(new BadRequestException('Only image files are allowed!'), false);
-        }
-        cb(null, true);
-      },
     }),
   )
   @ResponseMessage('User updated successfully')
-  updateMe(@Body() updateUserDto: UpdateUserDto, @Req() req,
-  @UploadedFile() image?: Express.Multer.File,) {
+  updateMe(
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req,
+    @UploadedFile() image?: Express.Multer.File,
+  ) {
     const { uid, role } = req.user;
     const updateUserDetails: UpdateUserParams = {
       uid,
