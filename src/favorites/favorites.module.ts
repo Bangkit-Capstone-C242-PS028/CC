@@ -10,9 +10,11 @@ import { User } from 'src/users/entities/user.entity';
 import { Article } from 'src/articles/entities/article.entity';
 import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
 import { ArticlesModule } from 'src/articles/articles.module';
+import { GamificationModule } from 'src/gamification/gamification.module';
 
 @Module({
   imports: [
+    GamificationModule,
     ArticlesModule,
     TypeOrmModule.forFeature([Favorite, User, Article]),
   ],

@@ -40,12 +40,31 @@ export class ArticlesService {
     private readonly gamificationService: GamificationService,
   ) {}
 
-  private async sendNewArticleNotification(article: Article) {
+  private async sendNewArticleNotification(article: Article, imageUrl: string) {
     const message = {
       notification: {
         title: 'New Article Published',
         body: `A new article titled "${article.title}" has been published.`,
-        image: article.imageUrl,
+      },
+      android: {
+        notification: {
+          imageUrl: imageUrl,
+        },
+      },
+      apns: {
+        payload: {
+          aps: {
+            'mutable-content': 1,
+          },
+        },
+        fcm_options: {
+          image: imageUrl,
+        },
+      },
+      webpush: {
+        headers: {
+          image: imageUrl,
+        },
       },
       topic: 'articles',
     };
@@ -85,7 +104,7 @@ export class ArticlesService {
 
     await this.articleRepository.update(article.id, { imageUrl });
 
-    await this.sendNewArticleNotification(article);
+    await this.sendNewArticleNotification(article, imageUrl);
     await this.gamificationService.addPoints({
       userId: authorUid,
       activity: 'Create Article',

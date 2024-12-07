@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { GenaiService } from './genai.service';
 import { ChatbotChatDto } from './dto/chatbot-chat.dto';
 import { Auth } from '../common/decorators/auth.decorator';
@@ -9,8 +9,9 @@ export class GenaiController {
 
   @Post('chatbot')
   @Auth('DOCTOR', 'PATIENT')
-  async chatbot(@Body() chatbotChatDto: ChatbotChatDto) {
-    return this.genaiService.chat(chatbotChatDto.message);
+  async chatbot(@Body() chatbotChatDto: ChatbotChatDto, @Req() req) {
+    const role = req.user.role;
+    return this.genaiService.chat(chatbotChatDto.message, role);
   }
 
   @Post('rephrase')
