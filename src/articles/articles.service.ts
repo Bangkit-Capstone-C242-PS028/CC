@@ -43,9 +43,28 @@ export class ArticlesService {
   private async sendNewArticleNotification(article: Article) {
     const message = {
       notification: {
-        title: 'New Article Published',
+        title: 'Sparky says hello!',
         body: `A new article titled "${article.title}" has been published.`,
-        image: article.imageUrl,
+      },
+      android: {
+        notification: {
+          imageUrl: article.imageUrl,
+        },
+      },
+      apns: {
+        payload: {
+          aps: {
+            'mutable-content': 1,
+          },
+        },
+        fcm_options: {
+          image: article.imageUrl,
+        },
+      },
+      webpush: {
+        headers: {
+          image: article.imageUrl,
+        },
       },
       topic: 'articles',
     };
