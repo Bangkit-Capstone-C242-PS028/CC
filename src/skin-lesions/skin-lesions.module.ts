@@ -6,14 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SkinLesion } from './entities/skin-lesion.entity';
 import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
 import { PubsubModule } from 'src/infrastructure/pubsub/pubsub.module';
-import { UserModule } from 'src/users/users.module';
+import { User } from 'src/users/entities/user.entity';
 
 @Module({
   imports: [
     StorageModule,
     PubsubModule,
-    UserModule,
-    TypeOrmModule.forFeature([SkinLesion]),
+    TypeOrmModule.forFeature([SkinLesion, User]),
   ],
   controllers: [SkinLesionsController],
   providers: [SkinLesionsService, FirebaseAdmin],

@@ -28,6 +28,7 @@ export type UpdateUserParams = {
   address?: string;
   specialization?: string;
   workplace?: string;
+  image?: Express.Multer.File;
 };
 
 export type DeleteUserParams = {

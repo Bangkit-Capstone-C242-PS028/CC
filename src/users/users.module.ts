@@ -6,9 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Doctor } from './entities/doctor.entity';
 import { Patient } from './entities/patient.entity';
 import { User } from './entities/user.entity';
+import { StorageModule } from 'src/infrastructure/storage/storage.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Doctor, Patient, User])],
+  imports: [StorageModule, TypeOrmModule.forFeature([Doctor, Patient, User])],
   controllers: [UsersController],
   providers: [UsersService, FirebaseAdmin],
   exports: [UsersService],

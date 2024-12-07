@@ -22,6 +22,9 @@ import {
 } from 'src/utils/pagination.helper';
 import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { StorageService } from 'src/infrastructure/storage/storage.service';
+import { title } from 'process';
+import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
+import { GamificationService } from 'src/gamification/gamification.service';
 
 @Injectable()
 export class ArticlesService {
@@ -33,7 +36,27 @@ export class ArticlesService {
     @InjectRepository(Favorite)
     private readonly favoriteRepository: Repository<Favorite>,
     private readonly storageService: StorageService,
+    private readonly firebaseAdmin: FirebaseAdmin,
+    private readonly gamificationService: GamificationService,
   ) {}
+
+  private async sendNewArticleNotification(article: Article) {
+    const message = {
+      notification: {
+        title: 'New Article Published',
+        body: `A new article titled "${article.title}" has been published.`,
+        image: article.imageUrl,
+      },
+      topic: 'articles',
+    };
+
+    try {
+      await this.firebaseAdmin.setup().messaging().send(message);
+      console.log('Notification sent successfully');
+    } catch (error) {
+      console.error('Error sending notification:', error);
+    }
+  }
 
   async create(params: CreateArticleParams) {
     const { title, content, authorUid, image } = params;
@@ -59,14 +82,19 @@ export class ArticlesService {
       image.buffer,
       [{ id: article.id }],
     );
-    console.log(imageUrl);
 
     await this.articleRepository.update(article.id, { imageUrl });
 
+    await this.sendNewArticleNotification(article);
+    await this.gamificationService.addPoints({
+      userId: authorUid,
+      activity: 'Create Article',
+      points: 10,
+    });
     return { articleId: article.id };
   }
 
-  async findAll(params: PaginationParams): Promise<PaginatedResponse<Article>> {
+  async findAll(params: PaginationParams) {
     const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
@@ -82,7 +110,17 @@ export class ArticlesService {
     });
 
     return {
-      data,
+      articles: data.map((article) => ({
+        id: article.id,
+        title: article.title,
+        content: article.content,
+        image_url: article.imageUrl,
+        created_at: article.created_at,
+        updated_at: article.updated_at,
+        name:
+          article.author.user.firstName + ' ' + article.author.user.lastName,
+        avatar: article.author.user.photoUrl,
+      })),
       meta: {
         total,
         page,
@@ -102,7 +140,16 @@ export class ArticlesService {
       throw new NotFoundException('Article not found');
     }
 
-    return article;
+    return {
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      image_url: article.imageUrl,
+      created_at: article.created_at,
+      updated_at: article.updated_at,
+      name: article.author.user.firstName + ' ' + article.author.user.lastName,
+      avatar: article.author.user.photoUrl,
+    };
   }
 
   async update(params: UpdateArticleParams) {
@@ -147,7 +194,10 @@ export class ArticlesService {
   async remove(params: DeleteArticleParams) {
     const { id, authorUid } = params;
 
-    const article = await this.findOne({ id });
+    const article = await this.articleRepository.findOne({
+      where: { id },
+      relations: { author: true },
+    });
 
     if (!article) {
       throw new NotFoundException('Article not found');

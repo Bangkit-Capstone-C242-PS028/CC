@@ -26,6 +26,8 @@ import {
   DEFAULT_PAGE,
   getPaginationParams,
 } from 'src/utils/pagination.helper';
+import { async, skip, take } from 'rxjs';
+import { GamificationService } from 'src/gamification/gamification.service';
 
 @Injectable()
 export class ForumsService {
@@ -40,6 +42,7 @@ export class ForumsService {
     private readonly doctorRepository: Repository<Doctor>,
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
+    private readonly gamificationService: GamificationService,
   ) {}
 
   async create(createForumDetails: CreateForumParams) {
@@ -60,10 +63,15 @@ export class ForumsService {
     });
 
     await this.forumRepository.save(forum);
+    await this.gamificationService.addPoints({
+      userId: patientUid,
+      activity: 'Create Forum',
+      points: 10,
+    });
     return { forumId: forum.id };
   }
 
-  async findAll(params: PaginationParams): Promise<PaginatedResponse<Forum>> {
+  async findAll(params: PaginationParams) {
     const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
@@ -82,7 +90,13 @@ export class ForumsService {
     });
 
     return {
-      data,
+      data: data.map((forum) => ({
+        ...forum,
+        patient: {
+          ...forum.patient,
+          user: forum.patient.user.toResponse(),
+        },
+      })),
       meta: {
         total,
         page,
@@ -108,7 +122,13 @@ export class ForumsService {
       throw new NotFoundException('Forum not found');
     }
 
-    return forum;
+    return {
+      ...forum,
+      patient: {
+        ...forum.patient,
+        user: forum.patient.user.toResponse(),
+      },
+    };
   }
 
   async findMyForums(patientUid: string) {
@@ -177,9 +197,7 @@ export class ForumsService {
     }
   }
 
-  async findReplies(
-    params: FindRepliesParams,
-  ): Promise<PaginatedResponse<ForumReply>> {
+  async findReplies(params: FindRepliesParams) {
     const { forumId, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
@@ -200,7 +218,10 @@ export class ForumsService {
     });
 
     return {
-      data,
+      data: data.map((reply) => ({
+        ...reply,
+        responder: reply.responder.toResponse(),
+      })),
       meta: {
         total,
         page,

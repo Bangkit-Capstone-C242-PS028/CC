@@ -26,28 +26,37 @@ export class UsersService {
     private readonly patientRepository: Repository<Patient>,
 
     private readonly firebaseAdmin: FirebaseAdmin,
+    private readonly storageService: StorageService,
   ) {}
 
   async findAll(params: FindAllUsersParams) {
     const { role, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
-    const queryBuilder = this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.doctor', 'doctor')
-      .leftJoinAndSelect('user.patient', 'patient');
+    // const queryBuilder = this.userRepository
+    //   .createQueryBuilder('user')
+    //   .leftJoinAndSelect('user.doctor', 'doctor')
+    //   .leftJoinAndSelect('user.patient', 'patient')
 
-    if (role) {
-      queryBuilder.where('user.role = :role', { role });
-    }
+    // if (role) {
+    //   queryBuilder.where('user.role = :role', { role });
+    // }
 
-    const [data, total] = await queryBuilder
-      .take(take)
-      .skip(skip)
-      .getManyAndCount();
+    // const [data, total] = await queryBuilder
+    //   .take(take)
+    //   .skip(skip)
+    //   .getManyAndCount();
+
+    const [data, total] = await this.userRepository.findAndCount({
+      where: role ? { role } : {},
+      relations: ['doctor', 'patient'],
+      order: { firstName: 'ASC', lastName: 'ASC' },
+      take,
+      skip,
+    });
 
     return {
-      data,
+      data: data.map((user) => user.toResponse()),
       meta: {
         total,
         page,
@@ -67,11 +76,11 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    return user;
+    return user.toResponse();
   }
 
   async update(params: UpdateUserParams) {
-    const { uid, ...updateData } = params;
+    const { uid, image, ...updateData } = params;
     const user = await this.findOne({ uid });
 
     await this.userRepository.update(uid, {
@@ -88,6 +97,25 @@ export class UsersService {
         {
           specialization: updateData.specialization,
           workplace: updateData.workplace,
+        },
+      );
+    }
+
+    if (image) {
+      if (user.photoUrl) {
+        await this.storageService.delete(`users/${uid}/profile`);
+      }
+
+      const photoUrl = await this.storageService.save(
+        `users/${uid}/profile`,
+        image.mimetype,
+        image.buffer,
+        [{ id: uid }],
+      );
+      await this.userRepository.update(
+        { uid },
+        {
+          photoUrl,
         },
       );
     }

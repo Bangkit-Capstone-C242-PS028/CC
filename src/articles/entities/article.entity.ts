@@ -20,10 +20,10 @@ export class Article {
     this.id = nanoid();
   }
 
-  @Column()
+  @Column('text')
   title: string;
 
-  @Column()
+  @Column('text')
   content: string;
 
   @Column({ nullable: true })

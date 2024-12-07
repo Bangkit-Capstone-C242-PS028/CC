@@ -23,7 +23,7 @@ export class Forum {
     this.id = nanoid();
   }
 
-  @Column()
+  @Column('text')
   title: string;
 
   @Column('text')

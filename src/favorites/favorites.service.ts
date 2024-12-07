@@ -59,9 +59,7 @@ export class FavoritesService {
     return { favoriteId: favorite.id };
   }
 
-  async findUserFavorites(
-    params: FindUserFavoritesParams,
-  ): Promise<PaginatedResponse<Favorite>> {
+  async findUserFavorites(params: FindUserFavoritesParams) {
     const { userId, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
@@ -74,7 +72,22 @@ export class FavoritesService {
     });
 
     return {
-      data,
+      data: data.map((favorite) => ({
+        ...favorite,
+        article: {
+          id: favorite.article.id,
+          title: favorite.article.title,
+          content: favorite.article.content,
+          image_url: favorite.article.imageUrl,
+          created_at: favorite.article.created_at,
+          updated_at: favorite.article.updated_at,
+          name:
+            favorite.article.author.user.firstName +
+            ' ' +
+            favorite.article.author.user.lastName,
+          avatar: favorite.article.author.user.photoUrl,
+        },
+      })),
       meta: {
         total,
         page,
@@ -83,22 +96,25 @@ export class FavoritesService {
     };
   }
 
-  async findArticleFavorites(
-    params: FindArticleFavoritesParams,
-  ): Promise<PaginatedResponse<Favorite>> {
+  async findArticleFavorites(params: FindArticleFavoritesParams) {
     const { articleId, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
     const [data, total] = await this.favoriteRepository.findAndCount({
       where: { article: { id: articleId } },
-      relations: { article: { author: { user: true } } },
+      relations: { user: true },
       take,
       skip,
       order: { created_at: 'DESC' },
     });
 
     return {
-      data,
+      data: data.map((favorite) => ({
+        id: favorite.id,
+        created_at: favorite.created_at,
+        name: favorite.user.firstName + ' ' + favorite.user.lastName,
+        avatar: favorite.user.photoUrl,
+      })),
       meta: {
         total,
         page,
