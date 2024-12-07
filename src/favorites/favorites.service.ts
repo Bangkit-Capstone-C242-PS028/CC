@@ -19,6 +19,7 @@ import {
   getPaginationParams,
 } from 'src/utils/pagination.helper';
 import { ArticlesService } from 'src/articles/articles.service';
+import { GamificationService } from 'src/gamification/gamification.service';
 
 @Injectable()
 export class FavoritesService {
@@ -27,6 +28,8 @@ export class FavoritesService {
     private readonly favoriteRepository: Repository<Favorite>,
 
     private readonly articlesService: ArticlesService,
+
+    private readonly gamificationService: GamificationService,
   ) {}
 
   async create(params: CreateFavoriteParams) {
@@ -56,6 +59,11 @@ export class FavoritesService {
     });
 
     await this.favoriteRepository.save(favorite);
+    await this.gamificationService.addPoints({
+      userId: favorite.article.author.uid,
+      activity: 'Article favorited',
+      points: 5,
+    });
     return { favoriteId: favorite.id };
   }
 
@@ -135,6 +143,11 @@ export class FavoritesService {
     if (!favorite) {
       throw new NotFoundException('Favorite not found');
     }
+    await this.gamificationService.addPoints({
+      userId: favorite.article.author.uid,
+      activity: 'Favorite removed',
+      points: -5,
+    });
 
     await this.favoriteRepository.remove(favorite);
   }
