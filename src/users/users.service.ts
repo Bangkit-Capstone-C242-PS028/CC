@@ -14,6 +14,7 @@ import { User } from './entities/user.entity';
 import { DEFAULT_PAGE, getPaginationParams } from 'src/utils/pagination.helper';
 import { DEFAULT_LIMIT } from 'src/utils/pagination.helper';
 import { StorageService } from 'src/infrastructure/storage/storage.service';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class UsersService {
@@ -103,11 +104,14 @@ export class UsersService {
 
     if (image) {
       if (user.photoUrl) {
-        await this.storageService.delete(`users/${uid}/profile`);
+        const oldFileName = user.photoUrl
+          .split('https://storage.googleapis.com/dermascan-cloud-storage/')
+          .pop();
+        await this.storageService.delete(oldFileName);
       }
 
       const photoUrl = await this.storageService.save(
-        `users/${uid}/profile`,
+        `users/${uid}/profile/${nanoid()}`,
         image.mimetype,
         image.buffer,
         [{ id: uid }],
@@ -115,7 +119,7 @@ export class UsersService {
       await this.userRepository.update(
         { uid },
         {
-          photoUrl,
+          photoUrl: photoUrl.replaceAll('%2F', '/'),
         },
       );
     }
