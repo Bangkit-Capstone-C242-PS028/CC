@@ -8,10 +8,12 @@ import { ForumReply } from './entities/forum-reply.entity';
 import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
 import { Patient } from 'src/users/entities/patient.entity';
 import { User } from 'src/users/entities/user.entity';
+import { GamificationModule } from 'src/gamification/gamification.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Forum, ForumReply, Patient, Doctor, User]),
+    GamificationModule,
   ],
   controllers: [ForumsController],
   providers: [ForumsService, FirebaseAdmin],
