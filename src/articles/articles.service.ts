@@ -24,6 +24,7 @@ import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { StorageService } from 'src/infrastructure/storage/storage.service';
 import { title } from 'process';
 import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
+import { GamificationService } from 'src/gamification/gamification.service';
 
 @Injectable()
 export class ArticlesService {
@@ -36,6 +37,7 @@ export class ArticlesService {
     private readonly favoriteRepository: Repository<Favorite>,
     private readonly storageService: StorageService,
     private readonly firebaseAdmin: FirebaseAdmin,
+    private readonly gamificationService: GamificationService,
   ) {}
 
   private async sendNewArticleNotification(article: Article) {
@@ -84,6 +86,11 @@ export class ArticlesService {
     await this.articleRepository.update(article.id, { imageUrl });
 
     await this.sendNewArticleNotification(article);
+    await this.gamificationService.addPoints({
+      userId: authorUid,
+      activity: 'Create Article',
+      points: 10,
+    });
     return { articleId: article.id };
   }
 

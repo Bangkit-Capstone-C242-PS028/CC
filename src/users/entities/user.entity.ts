@@ -9,6 +9,7 @@ import {
 import { Patient } from './patient.entity';
 import { Doctor } from './doctor.entity';
 import { Favorite } from 'src/favorites/entities/favorite.entity';
+import { ActivityLog } from 'src/gamification/entities/activity-log.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -67,6 +68,12 @@ export class User {
     onDelete: 'CASCADE',
   })
   favorites: Favorite[];
+
+  @OneToMany(() => ActivityLog, (activityLog) => activityLog.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  activityLogs: ActivityLog[];
 
   toResponse() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

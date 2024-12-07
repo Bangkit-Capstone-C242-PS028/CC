@@ -25,6 +25,8 @@ import { ConsultationMessage } from './consultations/entities/consultation-messa
 import { ConsultationsModule } from './consultations/consultations.module';
 import { VertexaiModule } from './infrastructure/vertexai/vertexai.module';
 import { GenaiModule } from './genai/genai.module';
+import { GamificationModule } from './gamification/gamification.module';
+import { ActivityLog } from './gamification/entities/activity-log.entity';
 
 @Module({
   imports: [
@@ -65,6 +67,7 @@ import { GenaiModule } from './genai/genai.module';
         SkinLesion,
         Consultation,
         ConsultationMessage,
+        ActivityLog,
       ],
       synchronize: true,
     }),
@@ -90,6 +93,8 @@ import { GenaiModule } from './genai/genai.module';
     VertexaiModule,
 
     GenaiModule,
+
+    GamificationModule,
   ],
   controllers: [AppController],
   providers: [AppService, FirebaseAdmin],

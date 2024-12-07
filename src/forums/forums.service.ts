@@ -27,6 +27,7 @@ import {
   getPaginationParams,
 } from 'src/utils/pagination.helper';
 import { async, skip, take } from 'rxjs';
+import { GamificationService } from 'src/gamification/gamification.service';
 
 @Injectable()
 export class ForumsService {
@@ -41,6 +42,7 @@ export class ForumsService {
     private readonly doctorRepository: Repository<Doctor>,
     @InjectRepository(Patient)
     private readonly patientRepository: Repository<Patient>,
+    private readonly gamificationService: GamificationService,
   ) {}
 
   async create(createForumDetails: CreateForumParams) {
@@ -61,6 +63,11 @@ export class ForumsService {
     });
 
     await this.forumRepository.save(forum);
+    await this.gamificationService.addPoints({
+      userId: patientUid,
+      activity: 'Create Forum',
+      points: 10,
+    });
     return { forumId: forum.id };
   }
 
@@ -83,12 +90,12 @@ export class ForumsService {
     });
 
     return {
-      data: data.map(forum => ({
+      data: data.map((forum) => ({
         ...forum,
         patient: {
           ...forum.patient,
           user: forum.patient.user.toResponse(),
-        }
+        },
       })),
       meta: {
         total,
@@ -120,7 +127,7 @@ export class ForumsService {
       patient: {
         ...forum.patient,
         user: forum.patient.user.toResponse(),
-      }
+      },
     };
   }
 
@@ -190,9 +197,7 @@ export class ForumsService {
     }
   }
 
-  async findReplies(
-    params: FindRepliesParams,
-  ) {
+  async findReplies(params: FindRepliesParams) {
     const { forumId, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
@@ -213,9 +218,9 @@ export class ForumsService {
     });
 
     return {
-      data: data.map(reply => ({
+      data: data.map((reply) => ({
         ...reply,
-        responder: reply.responder.toResponse()
+        responder: reply.responder.toResponse(),
       })),
       meta: {
         total,
