@@ -146,7 +146,7 @@ export class SkinLesionsService {
     }
     if (skinLesion.originalImageUrl) {
       const fileName = skinLesion.originalImageUrl
-        .split('storage.googleapis.com/dermascan-skin-lesions/')
+        .split('storage.googleapis.com/dermascan-cloud-storage/')
         .pop();
       if (fileName) {
         await this.storageService.delete(fileName);
@@ -154,7 +154,7 @@ export class SkinLesionsService {
     }
     if (skinLesion.processedImageUrl) {
       const processedFileName = skinLesion.processedImageUrl
-        .split('storage.googleapis.com/dermascan-skin-lesions/')
+        .split('storage.googleapis.com/dermascan-cloud-storage/')
         .pop();
       if (processedFileName) {
         await this.storageService.delete(processedFileName);
