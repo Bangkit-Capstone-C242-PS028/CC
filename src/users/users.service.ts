@@ -81,27 +81,33 @@ export class UsersService {
   }
 
   async update(params: UpdateUserParams) {
-    const { uid, image, ...updateData } = params;
+    const {
+      uid,
+      image,
+      specialization,
+      workplace,
+      phoneNumber,
+      ...updateData
+    } = params;
     const user = await this.findOne({ uid });
 
     await this.userRepository.update(uid, {
       ...updateData,
       updatedAt: new Date(),
     });
-
     if (
       user.role === 'DOCTOR' &&
-      (updateData.specialization || updateData.workplace)
+      (specialization || workplace || phoneNumber)
     ) {
       await this.doctorRepository.update(
         { uid },
         {
-          specialization: updateData.specialization,
-          workplace: updateData.workplace,
+          specialization,
+          workplace,
+          phoneNumber,
         },
       );
     }
-
     if (image) {
       if (user.photoUrl) {
         const oldFileName = user.photoUrl

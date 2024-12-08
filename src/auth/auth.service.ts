@@ -92,7 +92,7 @@ export class AuthService {
     uid: string,
     user: User,
   ) {
-    const { specialization, workplace, whatsappUrl, document } = userRequest;
+    const { specialization, workplace, phoneNumber, document } = userRequest;
 
     const fileName = `doctors-documents/${uid}`;
     const documentUrl = await this.storageService.save(
@@ -107,7 +107,7 @@ export class AuthService {
       user,
       specialization,
       workplace,
-      whatsappUrl,
+      phoneNumber,
       documentUrl,
     });
     await this.doctorRepository.save(newDoctor);

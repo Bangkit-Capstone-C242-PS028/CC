@@ -43,4 +43,9 @@ export class UpdateUserDto {
   @MinLength(2)
   @MaxLength(100)
   workplace?: string;
+
+  @IsOptional()
+  @ValidateIf((o) => o.role === Role.DOCTOR)
+  @IsString()
+  phoneNumber?: string;
 }

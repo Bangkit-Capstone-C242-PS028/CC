@@ -62,7 +62,7 @@ export class AuthController {
       address: userRequest.address,
       specialization: userRequest.specialization || null,
       workplace: userRequest.workplace || null,
-      whatsappUrl: userRequest.whatsappUrl || null,
+      phoneNumber: userRequest.phoneNumber || null,
       document: document || null,
     };
     return this.authService.createUser(userDetail);

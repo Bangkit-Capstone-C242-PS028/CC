@@ -68,10 +68,10 @@ export class ArticlesController {
   @Auth('DOCTOR', 'PATIENT')
   @ResponseMessage('Articles retrieved successfully')
   async findAll(
-    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
-    page: number,
-    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
-    limit: number,
+    @Query('page')
+    page?: number,
+    @Query('limit')
+    limit?: number,
   ) {
     return this.articlesService.findAll({ page, limit });
   }

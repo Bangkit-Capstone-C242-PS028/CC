@@ -198,6 +198,8 @@ export class ForumsService {
   }
 
   async findReplies(params: FindRepliesParams) {
+    try {
+    } catch (error) {}
     const { forumId, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
