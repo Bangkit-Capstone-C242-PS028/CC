@@ -22,12 +22,13 @@ export class AuthService {
   ) {}
 
   async createUser(userRequest: SignUpUserParams): Promise<User> {
-    const { email, firstName, lastName, role } = userRequest;
+    const { email, firstName, lastName, role, password } = userRequest;
     const app = this.firebaseAdmin.setup();
     try {
       const createdUser = await app.auth().createUser({
         email,
         displayName: `${firstName} ${lastName}`,
+        password: password,
       });
       await app.auth().setCustomUserClaims(createdUser.uid, { role });
 

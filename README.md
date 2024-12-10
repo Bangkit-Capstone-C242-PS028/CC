@@ -2,6 +2,10 @@
 
 A comprehensive healthcare platform API built with NestJS, focusing on dermatological services, patient-doctor interactions, and medical content management.
 
+## 📚 API Documentation
+
+[click here](https://documenter.getpostman.com/view/39388595/2sAYBRGa24)
+
 ## Features
 
 - 🔐 Authentication & Authorization
@@ -36,9 +40,6 @@ npm run start:dev
 npm run start:prod
 ```
 
-## 📚 API Documentation
-
-[click here](https://documenter.getpostman.com/view/39388595/2sAYBRGa24)
 
 <br>
 
