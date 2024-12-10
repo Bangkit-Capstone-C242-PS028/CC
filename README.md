@@ -2,9 +2,14 @@
 
 A comprehensive healthcare platform API built with NestJS, focusing on dermatological services, patient-doctor interactions, and medical content management.
 
+<br>
+
+
 ## 📚 API Documentation
 
 [click here](https://documenter.getpostman.com/view/39388595/2sAYBRGa24)
+
+<br>
 
 ## Features
 
@@ -16,6 +21,9 @@ A comprehensive healthcare platform API built with NestJS, focusing on dermatolo
   - 📝 Forum Replies
 - 🧠 Skin Lesion Detection
 - 🗣️ Consultation
+
+<br>
+
 
 ## Project Setup
 
@@ -39,7 +47,123 @@ npm run start:dev
 # Production mode
 npm run start:prod
 ```
+<br>
 
+
+## Database Diagram
+
+```mermaid
+erDiagram
+    USER {
+        string uid PK
+        string role
+        string email
+        string firstName
+        string lastName
+        date dob
+        string address
+        date createdAt
+        date updatedAt
+        int points
+        string photoUrl
+    }
+
+    DOCTOR {
+        string uid PK
+        string specialization
+        string workplace
+        string documentUrl
+        bool isVerified
+        string phoneNumber
+    }
+
+    PATIENT {
+        string uid PK
+    }
+
+    ARTICLE {
+        string id PK
+        text title
+        text content
+        string imageUrl
+        date created_at
+        date updated_at
+    }
+
+    FAVORITE {
+        string id PK
+        date created_at
+    }
+
+    FORUM {
+        string id PK
+        text title
+        text content
+        string status
+        date created_at
+        date updated_at
+    }
+
+    FORUM_REPLY {
+        string id PK
+        string responder_role
+        text content
+        date created_at
+        date updated_at
+    }
+
+    SKIN_LESION {
+        string id PK
+        string originalImageUrl
+        string processedImageUrl
+        enum status
+        string classification
+        string description
+        date createdAt
+        date processedAt
+    }
+
+    CONSULTATION {
+        string id PK
+        enum status
+        date requestedAt
+        date acceptedAt
+        date completedAt
+    }
+
+    CONSULTATION_MESSAGE {
+        string id PK
+        string content
+        date sentAt
+    }
+
+    ACTIVITY_LOG {
+        string id PK
+        string activity
+        int points
+        date createdAt
+    }
+
+    USER ||--o{ DOCTOR : "has one"
+    USER ||--o{ PATIENT : "has one"
+    USER ||--o{ FAVORITE : "has many"
+    USER ||--o{ ACTIVITY_LOG : "has many"
+    DOCTOR ||--o{ ARTICLE : "writes"
+    DOCTOR ||--o{ CONSULTATION : "conducts"
+    PATIENT ||--o{ CONSULTATION : "requests"
+    PATIENT ||--o{ FORUM : "creates"
+    PATIENT ||--o{ SKIN_LESION : "has many"
+    ARTICLE ||--o{ FAVORITE : "is favorited"
+    FORUM ||--o{ FORUM_REPLY : "has many"
+    FORUM_REPLY ||--o{ USER : "is responded by"
+    CONSULTATION ||--o{ CONSULTATION_MESSAGE : "has many"
+    CONSULTATION_MESSAGE ||--o{ USER : "is sent by"
+```
+<br>
+
+## Cloud Architecture Diagram (Google Cloud Platform)
+
+![Cloud Architecture Diagram](https://raw.githubusercontent.com/Bangkit-Capstone-C242-PS028/.github/refs/heads/main/assets/GCP%20Architecture%20DermaScan.png)
 
 <br>
 
