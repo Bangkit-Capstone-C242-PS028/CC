@@ -57,7 +57,7 @@ export class UsersService {
     });
 
     return {
-      data: data.map((user) => user.toResponse()),
+      data,
       meta: {
         total,
         page,
@@ -77,7 +77,7 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    return user.toResponse();
+    return user;
   }
 
   async update(params: UpdateUserParams) {

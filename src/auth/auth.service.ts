@@ -7,8 +7,6 @@ import { Doctor } from '../users/entities/doctor.entity';
 import { Patient } from '../users/entities/patient.entity';
 import { User } from '../users/entities/user.entity';
 import { StorageService } from 'src/infrastructure/storage/storage.service';
-import * as bcrypt from 'bcrypt';
-import { UserLoginDto } from './dto/user-login';
 
 @Injectable()
 export class AuthService {
@@ -22,26 +20,6 @@ export class AuthService {
     private readonly firebaseAdmin: FirebaseAdmin,
     private readonly storageService: StorageService,
   ) {}
-
-  async login(userLoginDto: UserLoginDto) {
-    const { email, password } = userLoginDto;
-    const userDb = await this.userRepository.findOneBy({ email });
-    if (!userDb) {
-      throw new BadRequestException('User or password is incorrect');
-    }
-    // check if password is correct
-    const isPasswordCorrect = await bcrypt.compare(password, userDb.password);
-    if (!isPasswordCorrect) {
-      throw new BadRequestException('User or password is incorrect');
-    }
-
-    const app = this.firebaseAdmin.setup();
-    const user = await app.auth().getUserByEmail(email);
-    const token = await app.auth().createCustomToken(user.uid, {
-      role: userDb.role,
-    });
-    return { token };
-  }
 
   async createUser(userRequest: SignUpUserParams): Promise<User> {
     const { email, password, firstName, lastName, role } = userRequest;
@@ -64,7 +42,6 @@ export class AuthService {
   private async insertUser(userRequest: SignUpUserParams, uid: string) {
     const { email, firstName, lastName, dob, address, role, password } =
       userRequest;
-    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = this.userRepository.create({
       uid,
       email,
@@ -73,7 +50,6 @@ export class AuthService {
       lastName,
       dob,
       address,
-      password: hashedPassword,
       createdAt: new Date(),
       updatedAt: new Date(),
       points: 0,
