@@ -22,12 +22,11 @@ export class AuthService {
   ) {}
 
   async createUser(userRequest: SignUpUserParams): Promise<User> {
-    const { email, password, firstName, lastName, role } = userRequest;
+    const { email, firstName, lastName, role } = userRequest;
     const app = this.firebaseAdmin.setup();
     try {
       const createdUser = await app.auth().createUser({
         email,
-        password,
         displayName: `${firstName} ${lastName}`,
       });
       await app.auth().setCustomUserClaims(createdUser.uid, { role });
@@ -40,8 +39,7 @@ export class AuthService {
   }
 
   private async insertUser(userRequest: SignUpUserParams, uid: string) {
-    const { email, firstName, lastName, dob, address, role, password } =
-      userRequest;
+    const { email, firstName, lastName, dob, address, role } = userRequest;
     const newUser = this.userRepository.create({
       uid,
       email,

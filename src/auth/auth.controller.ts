@@ -48,7 +48,6 @@ export class AuthController {
     }
     const userDetail: SignUpUserParams = {
       email: userRequest.email,
-      password: userRequest.password,
       role: userRequest.role,
       firstName: userRequest.firstName,
       lastName: userRequest.lastName,
