@@ -4,7 +4,6 @@ A comprehensive healthcare platform API built with NestJS, focusing on dermatolo
 
 <br>
 
-
 ## 📚 API Documentation
 
 [click here](https://documenter.getpostman.com/view/39388595/2sAYBRGa24)
@@ -23,7 +22,6 @@ A comprehensive healthcare platform API built with NestJS, focusing on dermatolo
 - 🗣️ Consultation
 
 <br>
-
 
 ## Project Setup
 
@@ -47,8 +45,8 @@ npm run start:dev
 # Production mode
 npm run start:prod
 ```
-<br>
 
+<br>
 
 ## Database Diagram
 
@@ -159,11 +157,12 @@ erDiagram
     CONSULTATION ||--o{ CONSULTATION_MESSAGE : "has many"
     CONSULTATION_MESSAGE ||--o{ USER : "is sent by"
 ```
+
 <br>
 
 ## Cloud Architecture Diagram (Google Cloud Platform)
 
-![Cloud Architecture Diagram](https://raw.githubusercontent.com/Bangkit-Capstone-C242-PS028/.github/refs/heads/main/assets/GCP%20Architecture%20DermaScan.png)
+![Cloud Architecture Diagram](https://raw.githubusercontent.com/Bangkit-Capstone-C242-PS028/.github/refs/heads/main/profile/assets/GCP%20Architecture%20DermaScan.png)
 
 <br>
 
