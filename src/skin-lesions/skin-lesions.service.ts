@@ -99,24 +99,13 @@ export class SkinLesionsService {
     const { patientUid, page, limit } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
-    const [skinLesions, total] = await this.skinLesionRepository.findAndCount({
+    const [data, total] = await this.skinLesionRepository.findAndCount({
       where: { patient: { uid: patientUid } },
       order: { createdAt: 'DESC' },
       relations: { patient: true },
       take,
       skip,
     });
-
-    const data = skinLesions.map((lesion) => ({
-      id: lesion.id,
-      patientUid: lesion.patient.uid,
-      originalImageUrl: lesion.originalImageUrl,
-      processedImageUrl: lesion.processedImageUrl,
-      classification: lesion.classification,
-      status: lesion.status,
-      createdAt: lesion.createdAt,
-      processedAt: lesion.processedAt,
-    }));
 
     return {
       data,
