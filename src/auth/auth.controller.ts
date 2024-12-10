@@ -12,16 +12,10 @@ import { SignUpUserParams } from 'src/utils/types';
 import { AuthService } from './auth.service';
 import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UserLoginDto } from './dto/user-login';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
-  @Post('/login')
-  signin(@Body() userLoginDto: UserLoginDto) {
-    return this.authService.login(userLoginDto);
-  }
 
   @Post('/signup')
   @UseInterceptors(
@@ -62,7 +56,7 @@ export class AuthController {
       address: userRequest.address,
       specialization: userRequest.specialization || null,
       workplace: userRequest.workplace || null,
-      whatsappUrl: userRequest.whatsappUrl || null,
+      phoneNumber: userRequest.phoneNumber || null,
       document: document || null,
     };
     return this.authService.createUser(userDetail);

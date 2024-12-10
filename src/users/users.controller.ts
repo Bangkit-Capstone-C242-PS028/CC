@@ -60,6 +60,7 @@ export class UsersController {
     if (role !== 'DOCTOR') {
       delete updateUserDetails.specialization;
       delete updateUserDetails.workplace;
+      delete updateUserDetails.phoneNumber;
     }
     return this.usersService.update(updateUserDetails);
   }
@@ -79,7 +80,7 @@ export class UsersController {
   @Auth('DOCTOR', 'PATIENT')
   @ResponseMessage('Users retrieved successfully')
   findAll(
-    @Query('role') role: string,
+    @Query('role') role?: string,
     @Query('page') page?: number,
     @Query('limit') limit?: number,
   ) {

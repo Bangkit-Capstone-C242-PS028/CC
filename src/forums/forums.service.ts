@@ -90,13 +90,7 @@ export class ForumsService {
     });
 
     return {
-      data: data.map((forum) => ({
-        ...forum,
-        patient: {
-          ...forum.patient,
-          user: forum.patient.user.toResponse(),
-        },
-      })),
+      data,
       meta: {
         total,
         page,
@@ -122,13 +116,7 @@ export class ForumsService {
       throw new NotFoundException('Forum not found');
     }
 
-    return {
-      ...forum,
-      patient: {
-        ...forum.patient,
-        user: forum.patient.user.toResponse(),
-      },
-    };
+    return forum;
   }
 
   async findMyForums(patientUid: string) {
@@ -198,6 +186,8 @@ export class ForumsService {
   }
 
   async findReplies(params: FindRepliesParams) {
+    try {
+    } catch (error) {}
     const { forumId, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
@@ -218,10 +208,7 @@ export class ForumsService {
     });
 
     return {
-      data: data.map((reply) => ({
-        ...reply,
-        responder: reply.responder.toResponse(),
-      })),
+      data,
       meta: {
         total,
         page,

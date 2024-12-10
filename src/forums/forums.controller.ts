@@ -49,10 +49,10 @@ export class ForumsController {
   @Auth('DOCTOR', 'PATIENT')
   @ResponseMessage('Forums retrieved successfully')
   findAll(
-    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
-    page: number,
-    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
-    limit: number,
+    @Query('page')
+    page?: number,
+    @Query('limit')
+    limit?,
   ) {
     return this.forumsService.findAll({ page, limit });
   }
@@ -108,10 +108,10 @@ export class ForumsController {
   @ResponseMessage('Forum replies retrieved successfully')
   findReplies(
     @Param('forumId') forumId: string,
-    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
-    page: number,
-    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
-    limit: number,
+    @Query('page')
+    page?: number,
+    @Query('limit')
+    limit?: number,
   ) {
     const findRepliesParams: FindRepliesParams = {
       forumId: forumId,

@@ -23,9 +23,6 @@ export class User {
   email: string;
 
   @Column()
-  password: string;
-
-  @Column()
   firstName: string;
 
   @Column()
@@ -74,10 +71,4 @@ export class User {
     onDelete: 'CASCADE',
   })
   activityLogs: ActivityLog[];
-
-  toResponse() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = this;
-    return userWithoutPassword;
-  }
 }

@@ -10,7 +10,7 @@ export type SignUpUserParams = {
   specialization?: string; // for doctors
   workplace?: string; // for doctors
   document?: Express.Multer.File; // for doctors
-  whatsappUrl?: string; // for doctors
+  phoneNumber?: string; // for doctors
 };
 
 export type FindUserParams = {
@@ -26,6 +26,7 @@ export type UpdateUserParams = {
   firstName?: string;
   lastName?: string;
   address?: string;
+  phoneNumber?: string;
   specialization?: string;
   workplace?: string;
   image?: Express.Multer.File;

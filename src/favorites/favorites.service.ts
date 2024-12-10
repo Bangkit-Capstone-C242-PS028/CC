@@ -53,12 +53,21 @@ export class FavoritesService {
       throw new BadRequestException('Article is already in favorites');
     }
 
-    const favorite = this.favoriteRepository.create({
+    let favorite = this.favoriteRepository.create({
       article: { id: articleId },
       user: { uid: userId },
     });
 
     await this.favoriteRepository.save(favorite);
+
+    favorite = await this.favoriteRepository.findOne({
+      where: {
+        article: { id: articleId },
+        user: { uid: userId },
+      },
+      relations: { article: { author: true } },
+    });
+
     await this.gamificationService.addPoints({
       userId: favorite.article.author.uid,
       activity: 'Article favorited',
@@ -138,6 +147,7 @@ export class FavoritesService {
         article: { id: articleId },
         user: { uid: userId },
       },
+      relations: { article: { author: true } },
     });
 
     if (!favorite) {

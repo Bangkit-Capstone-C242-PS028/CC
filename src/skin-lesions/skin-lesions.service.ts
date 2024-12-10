@@ -99,24 +99,13 @@ export class SkinLesionsService {
     const { patientUid, page, limit } = params;
     const { skip, take } = getPaginationParams(page, limit);
 
-    const [skinLesions, total] = await this.skinLesionRepository.findAndCount({
+    const [data, total] = await this.skinLesionRepository.findAndCount({
       where: { patient: { uid: patientUid } },
       order: { createdAt: 'DESC' },
       relations: { patient: true },
       take,
       skip,
     });
-
-    const data = skinLesions.map((lesion) => ({
-      id: lesion.id,
-      patientUid: lesion.patient.uid,
-      originalImageUrl: lesion.originalImageUrl,
-      processedImageUrl: lesion.processedImageUrl,
-      classification: lesion.classification,
-      status: lesion.status,
-      createdAt: lesion.createdAt,
-      processedAt: lesion.processedAt,
-    }));
 
     return {
       data,
@@ -146,7 +135,7 @@ export class SkinLesionsService {
     }
     if (skinLesion.originalImageUrl) {
       const fileName = skinLesion.originalImageUrl
-        .split('storage.googleapis.com/dermascan-skin-lesions/')
+        .split('storage.googleapis.com/dermascan-cloud-storage/')
         .pop();
       if (fileName) {
         await this.storageService.delete(fileName);
@@ -154,7 +143,7 @@ export class SkinLesionsService {
     }
     if (skinLesion.processedImageUrl) {
       const processedFileName = skinLesion.processedImageUrl
-        .split('storage.googleapis.com/dermascan-skin-lesions/')
+        .split('storage.googleapis.com/dermascan-cloud-storage/')
         .pop();
       if (processedFileName) {
         await this.storageService.delete(processedFileName);

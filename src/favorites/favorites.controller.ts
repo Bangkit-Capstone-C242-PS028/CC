@@ -42,10 +42,10 @@ export class FavoritesController {
   @ResponseMessage('Article favorites retrieved successfully')
   findArticleFavorites(
     @Param('id') id: string,
-    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
-    page: number,
-    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
-    limit: number,
+    @Query('page')
+    page?: number,
+    @Query('limit')
+    limit?: number,
   ) {
     const findArticleFavoritesDetails: FindArticleFavoritesParams = {
       articleId: id,
@@ -79,11 +79,11 @@ export class UsersFavoritesController {
   @Auth('PATIENT', 'DOCTOR')
   @ResponseMessage('User favorites retrieved successfully')
   findUserFavorites(
-    @Query('page', new DefaultValuePipe(DEFAULT_PAGE), ParseIntPipe)
-    page: number,
-    @Query('limit', new DefaultValuePipe(DEFAULT_LIMIT), ParseIntPipe)
-    limit: number,
     @Req() req,
+    @Query('page')
+    page?: number,
+    @Query('limit')
+    limit?: number,
   ) {
     const { uid } = req.user;
 
