@@ -22,9 +22,9 @@ import {
 } from 'src/utils/pagination.helper';
 import { Favorite } from 'src/favorites/entities/favorite.entity';
 import { StorageService } from 'src/infrastructure/storage/storage.service';
-import { title } from 'process';
 import { FirebaseAdmin } from 'src/infrastructure/firebase/firebase.setup';
 import { GamificationService } from 'src/gamification/gamification.service';
+import { CacheService } from 'src/infrastructure/cache/cache.service';
 
 @Injectable()
 export class ArticlesService {
@@ -38,6 +38,7 @@ export class ArticlesService {
     private readonly storageService: StorageService,
     private readonly firebaseAdmin: FirebaseAdmin,
     private readonly gamificationService: GamificationService,
+    private readonly cacheService: CacheService,
   ) {}
 
   private async sendNewArticleNotification(article: Article, imageUrl: string) {
@@ -150,6 +151,12 @@ export class ArticlesService {
 
   async findOne(params: FindArticleParams) {
     const { id } = params;
+    const cacheKey = `article-${id}`;
+    const cachedArticle = await this.cacheService.get(cacheKey);
+    if (cachedArticle) {
+      return JSON.parse(cachedArticle);
+    }
+
     const article = await this.articleRepository.findOne({
       where: { id },
       relations: { author: { user: true } },
@@ -158,8 +165,7 @@ export class ArticlesService {
     if (!article) {
       throw new NotFoundException('Article not found');
     }
-
-    return {
+    const data = {
       id: article.id,
       title: article.title,
       content: article.content,
@@ -169,6 +175,9 @@ export class ArticlesService {
       name: article.author.user.firstName + ' ' + article.author.user.lastName,
       avatar: article.author.user.photoUrl,
     };
+
+    await this.cacheService.set(cacheKey, JSON.stringify(data), 3600);
+    return data;
   }
 
   async update(params: UpdateArticleParams) {
@@ -207,7 +216,33 @@ export class ArticlesService {
       updated_at: new Date(),
     });
 
-    return this.findOne({ id });
+    const updatedArticle = await this.articleRepository.findOne({
+      where: { id },
+      relations: { author: { user: true } },
+    });
+
+    if (!updatedArticle) {
+      throw new NotFoundException('Updated article not found');
+    }
+
+    const articleData = {
+      id: updatedArticle.id,
+      title: updatedArticle.title,
+      content: updatedArticle.content,
+      image_url: updatedArticle.imageUrl,
+      created_at: updatedArticle.created_at,
+      updated_at: updatedArticle.updated_at,
+      name:
+        updatedArticle.author.user.firstName +
+        ' ' +
+        updatedArticle.author.user.lastName,
+      avatar: updatedArticle.author.user.photoUrl,
+    };
+
+    const cacheKey = `article-${id}`;
+    await this.cacheService.set(cacheKey, JSON.stringify(articleData), 3600); // Cache for 1 hour
+
+    return articleData;
   }
 
   async remove(params: DeleteArticleParams) {
@@ -230,5 +265,8 @@ export class ArticlesService {
 
     await this.favoriteRepository.delete({ article: { id } });
     await this.articleRepository.remove(article);
+
+    const cacheKey = `article-${id}`;
+    await this.cacheService.set(cacheKey, null, 0);
   }
 }

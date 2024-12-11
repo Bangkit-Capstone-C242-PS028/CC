@@ -27,6 +27,7 @@ import { VertexaiModule } from './infrastructure/vertexai/vertexai.module';
 import { GenaiModule } from './genai/genai.module';
 import { GamificationModule } from './gamification/gamification.module';
 import { ActivityLog } from './gamification/entities/activity-log.entity';
+import { CacheModule } from './infrastructure/cache/cache.module';
 
 @Module({
   imports: [
@@ -95,6 +96,8 @@ import { ActivityLog } from './gamification/entities/activity-log.entity';
     GenaiModule,
 
     GamificationModule,
+
+    CacheModule,
   ],
   controllers: [AppController],
   providers: [AppService, FirebaseAdmin],
